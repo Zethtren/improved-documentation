@@ -1229,14 +1229,20 @@ fn BlogPostRecommendations(post_id: String) -> impl IntoView {
                     Ok(links) if !links.is_empty() => {
                         view! {
                             <div class="recommendations">
-                                <p class="rec-disclaimer">
-                                    "AI-curated related reading \u{2014} not endorsed by the author"
+                                <p class="rec-header">
+                                    "Continued Reading "<span class="rec-tag">"(AI Generated)"</span>
                                 </p>
                                 {links.into_iter().map(|link| {
                                     let desc = link.description.clone();
+                                    let url = link.url.clone();
+                                    let has_url = url != "#" && !url.is_empty();
                                     view! {
                                         <div class="rec-item">
-                                            <span class="rec-title">{link.title}</span>
+                                            {if has_url {
+                                                view! { <a href=url target="_blank" class="rec-title">{link.title}</a> }.into_any()
+                                            } else {
+                                                view! { <span class="rec-title">{link.title}</span> }.into_any()
+                                            }}
                                             {desc.map(|d| view! {
                                                 <span class="rec-desc">" \u{2014} " {d}</span>
                                             })}

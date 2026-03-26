@@ -10,7 +10,17 @@ defmodule PhoenixDashboardWeb.BlogLive do
      |> assign(page_title: "Blog")
      |> assign(editing: nil, adding: false, status_msg: nil)
      |> assign(form_data: %{})
-     |> fetch_posts()}
+     |> fetch_posts()
+     |> fetch_recommendations()}
+  end
+
+  defp fetch_recommendations(socket) do
+    case SurrealClient.query("SELECT * FROM recommended_link ORDER BY fetched_at DESC") do
+      {:ok, recs} when is_list(recs) ->
+        assign(socket, recommendations: recs)
+      _ ->
+        assign(socket, recommendations: [])
+    end
   end
 
   defp fetch_posts(socket) do
@@ -179,16 +189,32 @@ defmodule PhoenixDashboardWeb.BlogLive do
     post = Enum.find(socket.assigns.posts, &(&1["id"] == id))
 
     if post do
-      # Run in a Task to not block the LiveView
+      pid = self()
       Task.start(fn ->
         PhoenixDashboard.EmbeddingPipeline.embed_blog_post(id, post["content"] || "")
-        PhoenixDashboard.EmbeddingPipeline.generate_recommendations(id, post["content"] || "")
+        result = PhoenixDashboard.EmbeddingPipeline.generate_recommendations(id, post["content"] || "")
+        send(pid, {:recommendations_done, result})
       end)
 
-      {:noreply, assign(socket, status_msg: {:info, "AI recommendations generating in background..."})}
+      {:noreply, assign(socket, status_msg: {:info, "AI recommendations generating..."})}
     else
       {:noreply, assign(socket, status_msg: {:error, "Post not found"})}
     end
+  end
+
+  def handle_info({:recommendations_done, {:ok, count}}, socket) do
+    {:noreply,
+     socket
+     |> assign(status_msg: {:info, "Generated #{count} recommendations."})
+     |> fetch_recommendations()}
+  end
+
+  def handle_info({:recommendations_done, {:error, reason}}, socket) do
+    {:noreply, assign(socket, status_msg: {:error, "Recommendation failed: #{inspect(reason)}"})}
+  end
+
+  def handle_info({:recommendations_done, _}, socket) do
+    {:noreply, socket}
   end
 
   defp format_tags(nil), do: ""
@@ -328,6 +354,35 @@ defmodule PhoenixDashboardWeb.BlogLive do
 
         <%= if @posts == [] and not @adding do %>
           <p class="hint-text">-- no blog posts found --</p>
+        <% end %>
+
+        <%= if @recommendations != [] do %>
+          <div style="margin-top: 1.5rem; border-top: 1px dashed var(--ctp-surface1); padding-top: 1rem;">
+            <p class="prompt-line">
+              <span class="prompt-user">admin</span><span class="prompt-at">@</span><span class="prompt-host">houston</span>
+              <span class="prompt-sep">~</span>
+              <span class="prompt-cmd">cat recommendations.log</span>
+            </p>
+
+            <%= for {post_id, recs} <- Enum.group_by(@recommendations, & &1["blog_post_id"]) do %>
+              <div style="margin: 0.5rem 0;">
+                <p style="color: var(--ctp-blue); font-size: 0.8rem; font-weight: 700;"><%= post_id %></p>
+                <%= for rec <- recs do %>
+                  <div style="padding: 0.15rem 0 0.15rem 1rem; font-size: 0.8rem;">
+                    <span style="color: var(--ctp-green);">→</span>
+                    <span style="color: var(--ctp-text);"><%= rec["title"] %></span>
+                    <%= if rec["description"] do %>
+                      <span style="color: var(--ctp-subtext0);"> — <%= rec["description"] %></span>
+                    <% end %>
+                  </div>
+                <% end %>
+              </div>
+            <% end %>
+
+            <p style="color: var(--ctp-overlay0); font-size: 0.7rem; font-style: italic; margin-top: 0.5rem;">
+              AI-generated topic suggestions — not endorsed links
+            </p>
+          </div>
         <% end %>
       </div>
     </div>
