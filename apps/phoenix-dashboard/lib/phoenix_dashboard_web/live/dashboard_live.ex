@@ -74,6 +74,7 @@ defmodule PhoenixDashboardWeb.DashboardLive do
               <.link navigate={~p"/experience"} class="pane-item">experience/</.link>
               <.link navigate={~p"/certifications"} class="pane-item">certifications/</.link>
               <.link navigate={~p"/analytics"} class="pane-item">analytics/</.link>
+              <.link navigate={~p"/blog"} class="pane-item">blog/</.link>
             </div>
           </div>
         </div>

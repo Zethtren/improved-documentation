@@ -221,6 +221,9 @@ defmodule PhoenixDashboardWeb.SkillsLive do
             <button phx-click="add" class="terminal-btn add-btn" disabled={@adding}>
               <span class="prompt-symbol">&gt;</span> add skill
             </button>
+            <.link navigate={~p"/skills/analytics"} class="terminal-btn">
+              <span class="prompt-symbol">&gt;</span> skill analytics
+            </.link>
           </div>
 
           <%= if @adding or @editing do %>

@@ -34,6 +34,7 @@ defmodule PhoenixDashboardWeb.Router do
     live "/", DashboardLive
     live "/analytics", AnalyticsLive
     live "/skills", SkillsLive
+    live "/skills/analytics", SkillAnalyticsLive
     live "/projects", ProjectsLive
     live "/experience", ExperienceLive
     live "/certifications", CertificationsLive
