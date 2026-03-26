@@ -1559,3 +1559,32 @@ a:hover {
         max-width: 1400px;
     }
 }
+
+/* ===== AI Recommendations ===== */
+
+.recommendations {
+    margin-top: 1rem;
+    padding: 0.75rem;
+    border: 1px dashed var(--ctp-surface1);
+    border-radius: 4px;
+}
+
+.rec-disclaimer {
+    color: var(--ctp-overlay0);
+    font-size: 0.75rem;
+    font-style: italic;
+    margin-bottom: 0.5rem;
+}
+
+.rec-item {
+    padding: 0.2rem 0;
+    font-size: 0.8rem;
+}
+
+.rec-title {
+    color: var(--ctp-blue);
+}
+
+.rec-desc {
+    color: var(--ctp-subtext0);
+}

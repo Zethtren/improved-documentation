@@ -119,22 +119,9 @@ defmodule PhoenixDashboardWeb.AnalyticsLive do
   def render(assigns) do
     ~H"""
     <div class="dashboard">
-      <div class="nav-back">
-        <.link navigate={~p"/"} class="terminal-btn">
-          <span class="prompt-symbol">&lt;</span> dashboard
-        </.link>
-      </div>
-
-      <div class="terminal-window">
-        <div class="terminal-titlebar">
-          <span class="terminal-dot red"></span>
-          <span class="terminal-dot yellow"></span>
-          <span class="terminal-dot green"></span>
-          <span class="titlebar-text">houston-cv :: analytics</span>
-        </div>
-        <div class="terminal-body">
-          <%!-- Summary stats --%>
-          <div class="info-section">
+      <div class="terminal-body">
+        <%!-- Summary stats --%>
+        <div class="info-section">
             <p class="prompt-line">
               <span class="prompt-user">{@admin_user}</span><span class="prompt-at">@</span><span class="prompt-host">houston</span>
               <span class="prompt-sep">~</span>
@@ -207,12 +194,6 @@ defmodule PhoenixDashboardWeb.AnalyticsLive do
             </div>
           </div>
 
-          <div style="margin-top: 1.5rem;">
-            <.link navigate={~p"/"} style="color: var(--ctp-blue); text-decoration: none;">
-              <span class="prompt-symbol">&gt;</span> back to dashboard
-            </.link>
-          </div>
-        </div>
       </div>
     </div>
     """

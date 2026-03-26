@@ -1,18 +1,32 @@
 <div class="app-shell">
   <header class="app-header">
-    <div class="header-left">
-      <span class="header-logo">houston-cv</span>
-      <span class="header-sep">|</span>
-      <span class="header-section">admin</span>
+    <div class="header-top">
+      <div class="header-left">
+        <.link navigate={~p"/"} class="header-logo-link">
+          <span class="header-logo">houston-cv</span>
+          <span class="header-sep">|</span>
+          <span class="header-section">admin</span>
+        </.link>
+      </div>
+      <div class="header-right">
+        <.link href={~p"/logout"} method="delete" class="header-logout">logout</.link>
+      </div>
     </div>
-    <div class="header-right">
-      <.link navigate={~p"/"} class="header-link">dashboard</.link>
-      <.link navigate={~p"/skills"} class="header-link">skills</.link>
-      <.link navigate={~p"/projects"} class="header-link">projects</.link>
-      <.link navigate={~p"/experience"} class="header-link">experience</.link>
-      <.link navigate={~p"/certifications"} class="header-link">certifications</.link>
-      <.link navigate={~p"/blog"} class="header-link">blog</.link>
-    </div>
+    <nav class="tab-bar">
+      <div class="tab-group">
+        <span class="tab-group-label">content:</span>
+        <.link navigate={~p"/content/skills"} class="tab-item">skills</.link>
+        <.link navigate={~p"/content/projects"} class="tab-item">projects</.link>
+        <.link navigate={~p"/content/experience"} class="tab-item">experience</.link>
+        <.link navigate={~p"/content/certifications"} class="tab-item">certs</.link>
+        <.link navigate={~p"/content/blog"} class="tab-item">blog</.link>
+      </div>
+      <div class="tab-group">
+        <span class="tab-group-label">insights:</span>
+        <.link navigate={~p"/insights/visitors"} class="tab-item">visitors</.link>
+        <.link navigate={~p"/insights/skills"} class="tab-item">skills</.link>
+      </div>
+    </nav>
   </header>
 
   <main class="app-main">
@@ -21,15 +35,8 @@
   </main>
 
   <footer class="tmux-bar">
-    <span class="tmux-left">[0] houston-cv*</span>
-    <span class="tmux-center">
-      <.link navigate={~p"/"} class="tmux-tab">dashboard</.link>
-      <.link navigate={~p"/skills"} class="tmux-tab">skills</.link>
-      <.link navigate={~p"/projects"} class="tmux-tab">projects</.link>
-      <.link navigate={~p"/experience"} class="tmux-tab">experience</.link>
-      <.link navigate={~p"/certifications"} class="tmux-tab">certs</.link>
-      <.link navigate={~p"/blog"} class="tmux-tab">blog</.link>
-    </span>
+    <span class="tmux-left">[houston-cv]</span>
+    <span class="tmux-center tmux-path"></span>
     <span class="tmux-right">{DateTime.utc_now() |> Calendar.strftime("%H:%M %Z")}</span>
   </footer>
 </div>

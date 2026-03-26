@@ -134,18 +134,34 @@ body::after {
 
 .app-header {
     display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0.75rem 1.5rem;
+    flex-direction: column;
     background-color: var(--ctp-crust);
     border-bottom: 1px solid var(--ctp-surface0);
     font-size: 0.85rem;
+}
+
+.header-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.6rem 1.5rem;
 }
 
 .header-left {
     display: flex;
     align-items: center;
     gap: 0.75rem;
+}
+
+.header-logo-link {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    text-decoration: none;
+}
+
+.header-logo-link:hover {
+    text-decoration: none;
 }
 
 .header-logo {
@@ -166,14 +182,71 @@ body::after {
     gap: 1rem;
 }
 
-.header-link {
-    color: var(--ctp-subtext0);
+.header-logout {
+    color: var(--ctp-red);
     font-size: 0.8rem;
+    text-decoration: none;
+    padding: 0.2rem 0.6rem;
+    border: 1px solid var(--ctp-surface1);
+    border-radius: 3px;
+    transition: all 0.15s ease;
 }
 
-.header-link:hover {
-    color: var(--ctp-green);
+.header-logout:hover {
+    border-color: var(--ctp-red);
+    background-color: rgba(243, 139, 168, 0.1);
     text-decoration: none;
+    color: var(--ctp-red);
+}
+
+/* ===== Tab Bar ===== */
+
+.tab-bar {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    padding: 0.4rem 1.5rem;
+    background-color: var(--ctp-mantle);
+    border-top: 1px solid var(--ctp-surface0);
+    overflow-x: auto;
+    flex-wrap: wrap;
+}
+
+.tab-group {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.tab-group-label {
+    color: var(--ctp-overlay0);
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: lowercase;
+    margin-right: 0.25rem;
+    white-space: nowrap;
+}
+
+.tab-item {
+    color: var(--ctp-subtext0);
+    font-size: 0.75rem;
+    text-decoration: none;
+    padding: 0.15rem 0.5rem;
+    border-radius: 3px;
+    transition: all 0.15s ease;
+    white-space: nowrap;
+}
+
+.tab-item:hover {
+    color: var(--ctp-green);
+    background-color: var(--ctp-surface0);
+    text-decoration: none;
+}
+
+.tab-item.active {
+    color: var(--ctp-crust);
+    background-color: var(--ctp-green);
+    font-weight: 700;
 }
 
 .app-main {
@@ -197,16 +270,9 @@ body::after {
     font-weight: 700;
 }
 
-.tmux-tab {
+.tmux-path {
     color: var(--ctp-crust);
-    text-decoration: none;
-    padding: 0 0.5rem;
-}
-
-.tmux-tab.active {
-    background-color: var(--ctp-crust);
-    color: var(--ctp-green);
-    padding: 0.1rem 0.5rem;
+    font-size: 0.75rem;
 }
 
 /* ===== Login Page ===== */
@@ -392,25 +458,53 @@ body::after {
     color: var(--ctp-subtext1);
 }
 
-.panes-placeholder {
+/* ===== Directory Listing (dashboard home) ===== */
+
+.dir-listing {
     margin-top: 1rem;
 }
 
-.pane-list {
+.dir-section {
+    margin-bottom: 1rem;
+    padding-left: 1rem;
+}
+
+.dir-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 0.25rem;
+}
+
+.dir-perms {
+    color: var(--ctp-overlay1);
+    font-size: 0.8rem;
+    font-family: "JetBrains Mono", monospace;
+}
+
+.dir-name {
+    color: var(--ctp-blue);
+    font-weight: 700;
+    font-size: 0.85rem;
+}
+
+.dir-children {
     display: flex;
     flex-wrap: wrap;
-    gap: 1rem;
-    padding-left: 1rem;
-    margin-bottom: 0.5rem;
+    gap: 0.75rem;
+    padding-left: 2.5rem;
 }
 
-.pane-item {
+.dir-link {
+    color: var(--ctp-teal);
     font-size: 0.85rem;
-    color: var(--ctp-blue);
+    text-decoration: none;
+    transition: color 0.15s ease;
 }
 
-.pane-item.upcoming {
-    color: var(--ctp-overlay1);
+.dir-link:hover {
+    color: var(--ctp-green);
+    text-decoration: none;
 }
 
 .hint-text {
@@ -596,6 +690,15 @@ body::after {
     background-color: rgba(243, 139, 168, 0.1);
 }
 
+.terminal-btn.ai-btn {
+    color: var(--ctp-peach);
+}
+
+.terminal-btn.ai-btn:hover {
+    border-color: var(--ctp-peach);
+    background-color: rgba(250, 179, 135, 0.1);
+}
+
 .terminal-btn.checkbox-btn {
     color: var(--ctp-green);
     border: none;
@@ -683,12 +786,19 @@ select.inline-input {
         flex-wrap: wrap;
         gap: 0.5rem;
     }
-}
 
-/* ===== Nav Back ===== */
+    .tab-bar {
+        padding: 0.4rem 0.75rem;
+        gap: 0.75rem;
+    }
 
-.nav-back {
-    margin-bottom: 0.5rem;
+    .tab-group {
+        flex-wrap: wrap;
+    }
+
+    .dir-children {
+        padding-left: 1rem;
+    }
 }
 
 /* ===== CRUD Form Layout ===== */

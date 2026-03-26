@@ -129,12 +129,6 @@ defmodule PhoenixDashboardWeb.SkillAnalyticsLive do
 
     ~H"""
     <div class="dashboard">
-      <div class="nav-back">
-        <.link navigate={~p"/skills"} class="terminal-btn">
-          <span class="prompt-symbol">&lt;</span> skills
-        </.link>
-      </div>
-
       <%!-- Section 1: Most Connected Skills --%>
       <div class="terminal-window">
         <div class="terminal-titlebar">

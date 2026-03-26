@@ -19,71 +19,74 @@ defmodule PhoenixDashboardWeb.DashboardLive do
   def render(assigns) do
     ~H"""
     <div class="dashboard">
-      <div class="terminal-window">
-        <div class="terminal-titlebar">
-          <span class="terminal-dot red"></span>
-          <span class="terminal-dot yellow"></span>
-          <span class="terminal-dot green"></span>
-          <span class="titlebar-text">houston-cv :: dashboard</span>
+      <div class="terminal-body">
+        <div class="welcome-block">
+          <pre class="ascii-art welcome-ascii">
+            ╦ ╦╔═╗╦ ╦╔═╗╔╦╗╔═╗╔╗╔   ╔═╗╦  ╦
+            ║ ║║ ║║ ║╚═╗ ║ ║ ║║║║   ║  ╚╗╔╝
+            ╩ ╩╚═╝╚═╝╚═╝ ╩ ╚═╝╝╚╝   ╚═╝ ╚╝
+          </pre>
         </div>
-        <div class="terminal-body">
-          <div class="welcome-block">
-            <pre class="ascii-art welcome-ascii">
-              ╦ ╦╔═╗╦ ╦╔═╗╔╦╗╔═╗╔╗╔   ╔═╗╦  ╦
-              ║ ║║ ║║ ║╚═╗ ║ ║ ║║║║   ║  ╚╗╔╝
-              ╩ ╩╚═╝╚═╝╚═╝ ╩ ╚═╝╝╚╝   ╚═╝ ╚╝
-            </pre>
-          </div>
 
-          <div class="info-section">
-            <p class="prompt-line">
-              <span class="prompt-user">{@admin_user}</span><span class="prompt-at">@</span><span class="prompt-host">houston</span>
-              <span class="prompt-sep">~</span>
-              <span class="prompt-cmd">status</span>
-            </p>
+        <div class="info-section">
+          <p class="prompt-line">
+            <span class="prompt-user">{@admin_user}</span><span class="prompt-at">@</span><span class="prompt-host">houston</span>
+            <span class="prompt-sep">~</span>
+            <span class="prompt-cmd">status</span>
+          </p>
 
-            <div class="status-grid">
-              <div class="status-row">
-                <span class="status-key">System</span>
-                <span class="status-val">houston-cv admin dashboard v0.1.0</span>
-              </div>
-              <div class="status-row">
-                <span class="status-key">Runtime</span>
-                <span class="status-val">Elixir {@elixir_ver} / OTP {@otp_ver}</span>
-              </div>
-              <div class="status-row">
-                <span class="status-key">Uptime</span>
-                <span class="status-val">{@uptime}</span>
-              </div>
-              <div class="status-row">
-                <span class="status-key">Database</span>
-                <span class="status-val">SurrealDB (houston/cv)</span>
-              </div>
+          <div class="status-grid">
+            <div class="status-row">
+              <span class="status-key">System</span>
+              <span class="status-val">houston-cv admin dashboard v0.1.0</span>
             </div>
-          </div>
-
-          <div class="panes-placeholder">
-            <p class="prompt-line">
-              <span class="prompt-user">{@admin_user}</span><span class="prompt-at">@</span><span class="prompt-host">houston</span>
-              <span class="prompt-sep">~</span>
-              <span class="prompt-cmd">ls panes/</span>
-            </p>
-            <div class="pane-list">
-              <.link navigate={~p"/skills"} class="pane-item">skills/</.link>
-              <.link navigate={~p"/projects"} class="pane-item">projects/</.link>
-              <.link navigate={~p"/experience"} class="pane-item">experience/</.link>
-              <.link navigate={~p"/certifications"} class="pane-item">certifications/</.link>
-              <.link navigate={~p"/analytics"} class="pane-item">analytics/</.link>
-              <.link navigate={~p"/blog"} class="pane-item">blog/</.link>
+            <div class="status-row">
+              <span class="status-key">Runtime</span>
+              <span class="status-val">Elixir {@elixir_ver} / OTP {@otp_ver}</span>
+            </div>
+            <div class="status-row">
+              <span class="status-key">Uptime</span>
+              <span class="status-val">{@uptime}</span>
+            </div>
+            <div class="status-row">
+              <span class="status-key">Database</span>
+              <span class="status-val">SurrealDB (houston/cv)</span>
             </div>
           </div>
         </div>
-      </div>
 
-      <div class="dashboard-actions">
-        <.link href={~p"/logout"} method="delete" class="logout-btn">
-          <span class="prompt-symbol">&gt;</span> logout
-        </.link>
+        <div class="dir-listing">
+          <p class="prompt-line">
+            <span class="prompt-user">{@admin_user}</span><span class="prompt-at">@</span><span class="prompt-host">houston</span>
+            <span class="prompt-sep">~</span>
+            <span class="prompt-cmd">ls</span>
+          </p>
+
+          <div class="dir-section">
+            <div class="dir-header">
+              <span class="dir-perms">drwxr-xr-x</span>
+              <span class="dir-name">content/</span>
+            </div>
+            <div class="dir-children">
+              <.link navigate={~p"/content/skills"} class="dir-link">skills/</.link>
+              <.link navigate={~p"/content/projects"} class="dir-link">projects/</.link>
+              <.link navigate={~p"/content/experience"} class="dir-link">experience/</.link>
+              <.link navigate={~p"/content/certifications"} class="dir-link">certifications/</.link>
+              <.link navigate={~p"/content/blog"} class="dir-link">blog/</.link>
+            </div>
+          </div>
+
+          <div class="dir-section">
+            <div class="dir-header">
+              <span class="dir-perms">drwxr-xr-x</span>
+              <span class="dir-name">insights/</span>
+            </div>
+            <div class="dir-children">
+              <.link navigate={~p"/insights/visitors"} class="dir-link">visitors/</.link>
+              <.link navigate={~p"/insights/skills"} class="dir-link">skills/</.link>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
     """

@@ -133,25 +133,12 @@ defmodule PhoenixDashboardWeb.ExperienceLive do
   def render(assigns) do
     ~H"""
     <div class="dashboard">
-      <div class="nav-back">
-        <.link navigate={~p"/"} class="terminal-btn">
-          <span class="prompt-symbol">&lt;</span> dashboard
-        </.link>
-      </div>
-
-      <div class="terminal-window">
-        <div class="terminal-titlebar">
-          <span class="terminal-dot red"></span>
-          <span class="terminal-dot yellow"></span>
-          <span class="terminal-dot green"></span>
-          <span class="titlebar-text">houston-cv :: experience</span>
-        </div>
-        <div class="terminal-body">
-          <p class="prompt-line">
-            <span class="prompt-user">admin</span><span class="prompt-at">@</span><span class="prompt-host">houston</span>
-            <span class="prompt-sep">~</span>
-            <span class="prompt-cmd">ls experience/</span>
-          </p>
+      <div class="terminal-body">
+        <p class="prompt-line">
+          <span class="prompt-user">admin</span><span class="prompt-at">@</span><span class="prompt-host">houston</span>
+          <span class="prompt-sep">~</span>
+          <span class="prompt-cmd">ls experience/</span>
+        </p>
 
           <%= if @status_msg do %>
             <div class={status_class(@status_msg)}>
@@ -267,10 +254,9 @@ defmodule PhoenixDashboardWeb.ExperienceLive do
             </tbody>
           </table>
 
-          <%= if @records == [] and not @adding do %>
-            <p class="hint-text">-- no experience records found --</p>
-          <% end %>
-        </div>
+        <%= if @records == [] and not @adding do %>
+          <p class="hint-text">-- no experience records found --</p>
+        <% end %>
       </div>
     </div>
     """

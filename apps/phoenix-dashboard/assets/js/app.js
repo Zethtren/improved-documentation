@@ -47,6 +47,32 @@ liveSocket.connect()
 // >> liveSocket.disableLatencySim()
 window.liveSocket = liveSocket
 
+// ===== Navigation: highlight active tab + set tmux path =====
+function updateNavState() {
+  const path = window.location.pathname
+
+  // Highlight active tab
+  document.querySelectorAll(".tab-item").forEach(tab => {
+    const href = tab.getAttribute("href")
+    if (href && path.startsWith(href)) {
+      tab.classList.add("active")
+    } else {
+      tab.classList.remove("active")
+    }
+  })
+
+  // Set tmux path display
+  const tmuxPath = document.querySelector(".tmux-path")
+  if (tmuxPath) {
+    const display = path === "/" ? "~" : path.replace(/^\//, "")
+    tmuxPath.textContent = display
+  }
+}
+
+// Run on initial load and after LiveView navigations
+window.addEventListener("phx:page-loading-stop", () => updateNavState())
+window.addEventListener("DOMContentLoaded", () => updateNavState())
+
 // The lines below enable quality of life phoenix_live_reload
 // development features:
 //

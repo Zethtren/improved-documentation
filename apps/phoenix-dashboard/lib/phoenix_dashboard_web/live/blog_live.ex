@@ -175,6 +175,22 @@ defmodule PhoenixDashboardWeb.BlogLive do
     end
   end
 
+  def handle_event("generate-recommendations", %{"id" => id}, socket) do
+    post = Enum.find(socket.assigns.posts, &(&1["id"] == id))
+
+    if post do
+      # Run in a Task to not block the LiveView
+      Task.start(fn ->
+        PhoenixDashboard.EmbeddingPipeline.embed_blog_post(id, post["content"] || "")
+        PhoenixDashboard.EmbeddingPipeline.generate_recommendations(id, post["content"] || "")
+      end)
+
+      {:noreply, assign(socket, status_msg: {:info, "AI recommendations generating in background..."})}
+    else
+      {:noreply, assign(socket, status_msg: {:error, "Post not found"})}
+    end
+  end
+
   defp format_tags(nil), do: ""
   defp format_tags(tags) when is_list(tags), do: Enum.map_join(tags, " ", &"[#{&1}]")
   defp format_tags(_), do: ""
@@ -194,25 +210,12 @@ defmodule PhoenixDashboardWeb.BlogLive do
   def render(assigns) do
     ~H"""
     <div class="dashboard">
-      <div class="nav-back">
-        <.link navigate={~p"/"} class="terminal-btn">
-          <span class="prompt-symbol">&lt;</span> dashboard
-        </.link>
-      </div>
-
-      <div class="terminal-window">
-        <div class="terminal-titlebar">
-          <span class="terminal-dot red"></span>
-          <span class="terminal-dot yellow"></span>
-          <span class="terminal-dot green"></span>
-          <span class="titlebar-text">houston-cv :: blog</span>
-        </div>
-        <div class="terminal-body">
-          <p class="prompt-line">
-            <span class="prompt-user">admin</span><span class="prompt-at">@</span><span class="prompt-host">houston</span>
-            <span class="prompt-sep">~</span>
-            <span class="prompt-cmd">ls blog/</span>
-          </p>
+      <div class="terminal-body">
+        <p class="prompt-line">
+          <span class="prompt-user">admin</span><span class="prompt-at">@</span><span class="prompt-host">houston</span>
+          <span class="prompt-sep">~</span>
+          <span class="prompt-cmd">ls blog/</span>
+        </p>
 
           <%= if @status_msg do %>
             <div class={status_class(@status_msg)}>
@@ -268,7 +271,7 @@ defmodule PhoenixDashboardWeb.BlogLive do
                   <button phx-click="save" class="terminal-btn save-btn"><span class="prompt-symbol">&gt;</span> save</button>
                   <button phx-click="cancel" class="terminal-btn cancel-btn"><span class="prompt-symbol">&gt;</span> cancel</button>
                   <%= if @editing do %>
-                    <.link navigate={~p"/blog/#{@editing}/edit"} class="terminal-btn edit-btn">
+                    <.link navigate={~p"/content/blog/#{@editing}/edit"} class="terminal-btn edit-btn">
                       <span class="prompt-symbol">&gt;</span> full editor
                     </.link>
                   <% end %>
@@ -307,9 +310,12 @@ defmodule PhoenixDashboardWeb.BlogLive do
                     <button phx-click="edit" phx-value-id={post["id"]} class="terminal-btn edit-btn">
                       <span class="prompt-symbol">&gt;</span> edit
                     </button>
-                    <.link navigate={~p"/blog/#{post["id"]}/edit"} class="terminal-btn edit-btn">
+                    <.link navigate={~p"/content/blog/#{post["id"]}/edit"} class="terminal-btn edit-btn">
                       <span class="prompt-symbol">&gt;</span> full editor
                     </.link>
+                    <button phx-click="generate-recommendations" phx-value-id={post["id"]} class="terminal-btn ai-btn">
+                      <span class="prompt-symbol">&gt;</span> ai recommend
+                    </button>
                     <button phx-click="delete" phx-value-id={post["id"]} class="terminal-btn delete-btn"
                       data-confirm="Delete this post?">
                       <span class="prompt-symbol">&gt;</span> delete
@@ -320,10 +326,9 @@ defmodule PhoenixDashboardWeb.BlogLive do
             </tbody>
           </table>
 
-          <%= if @posts == [] and not @adding do %>
-            <p class="hint-text">-- no blog posts found --</p>
-          <% end %>
-        </div>
+        <%= if @posts == [] and not @adding do %>
+          <p class="hint-text">-- no blog posts found --</p>
+        <% end %>
       </div>
     </div>
     """

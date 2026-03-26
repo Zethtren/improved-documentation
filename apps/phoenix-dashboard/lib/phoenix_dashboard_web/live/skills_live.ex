@@ -191,40 +191,24 @@ defmodule PhoenixDashboardWeb.SkillsLive do
   def render(assigns) do
     ~H"""
     <div class="dashboard">
-      <div class="nav-back">
-        <.link navigate={~p"/"} class="terminal-btn">
-          <span class="prompt-symbol">&lt;</span> dashboard
-        </.link>
-      </div>
+      <div class="terminal-body">
+        <p class="prompt-line">
+          <span class="prompt-user">admin</span><span class="prompt-at">@</span><span class="prompt-host">houston</span>
+          <span class="prompt-sep">~</span>
+          <span class="prompt-cmd">eza -l --icons ~/.skills/</span>
+        </p>
 
-      <div class="terminal-window">
-        <div class="terminal-titlebar">
-          <span class="terminal-dot red"></span>
-          <span class="terminal-dot yellow"></span>
-          <span class="terminal-dot green"></span>
-          <span class="titlebar-text">houston-cv :: skills</span>
-        </div>
-        <div class="terminal-body">
-          <p class="prompt-line">
-            <span class="prompt-user">admin</span><span class="prompt-at">@</span><span class="prompt-host">houston</span>
-            <span class="prompt-sep">~</span>
-            <span class="prompt-cmd">eza -l --icons ~/.skills/</span>
-          </p>
-
-          <%= if @status_msg do %>
-            <div class={status_class(@status_msg)}>
-              <span class="prompt-symbol">&gt;</span> {elem(@status_msg, 1)}
-            </div>
-          <% end %>
-
-          <div class="crud-actions">
-            <button phx-click="add" class="terminal-btn add-btn" disabled={@adding}>
-              <span class="prompt-symbol">&gt;</span> add skill
-            </button>
-            <.link navigate={~p"/skills/analytics"} class="terminal-btn">
-              <span class="prompt-symbol">&gt;</span> skill analytics
-            </.link>
+        <%= if @status_msg do %>
+          <div class={status_class(@status_msg)}>
+            <span class="prompt-symbol">&gt;</span> {elem(@status_msg, 1)}
           </div>
+        <% end %>
+
+        <div class="crud-actions">
+          <button phx-click="add" class="terminal-btn add-btn" disabled={@adding}>
+            <span class="prompt-symbol">&gt;</span> add skill
+          </button>
+        </div>
 
           <%= if @adding or @editing do %>
             <div class="skill-form terminal-window" style="margin: 0.5rem 0;">
@@ -314,10 +298,9 @@ defmodule PhoenixDashboardWeb.SkillsLive do
             </tbody>
           </table>
 
-          <%= if @skills == [] and not @adding do %>
-            <p class="hint-text">-- no skills found --</p>
-          <% end %>
-        </div>
+        <%= if @skills == [] and not @adding do %>
+          <p class="hint-text">-- no skills found --</p>
+        <% end %>
       </div>
     </div>
     """

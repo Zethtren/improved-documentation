@@ -111,28 +111,12 @@ defmodule PhoenixDashboardWeb.BlogPostLive do
   def render(assigns) do
     ~H"""
     <div class="dashboard">
-      <div class="nav-back">
-        <.link navigate={~p"/"} class="terminal-btn">
-          <span class="prompt-symbol">&lt;</span> dashboard
-        </.link>
-        <.link navigate={~p"/blog"} class="terminal-btn" style="margin-left: 0.5rem;">
-          <span class="prompt-symbol">&lt;</span> blog list
-        </.link>
-      </div>
-
-      <div class="terminal-window">
-        <div class="terminal-titlebar">
-          <span class="terminal-dot red"></span>
-          <span class="terminal-dot yellow"></span>
-          <span class="terminal-dot green"></span>
-          <span class="titlebar-text">houston-cv :: blog :: edit</span>
-        </div>
-        <div class="terminal-body">
-          <p class="prompt-line">
-            <span class="prompt-user">admin</span><span class="prompt-at">@</span><span class="prompt-host">houston</span>
-            <span class="prompt-sep">~</span>
-            <span class="prompt-cmd">nvim blog/{@form_data["slug"] || "untitled"}.md</span>
-          </p>
+      <div class="terminal-body">
+        <p class="prompt-line">
+          <span class="prompt-user">admin</span><span class="prompt-at">@</span><span class="prompt-host">houston</span>
+          <span class="prompt-sep">~</span>
+          <span class="prompt-cmd">nvim blog/{@form_data["slug"] || "untitled"}.md</span>
+        </p>
 
           <%= if @status_msg do %>
             <div class={status_class(@status_msg)}>
@@ -172,7 +156,7 @@ defmodule PhoenixDashboardWeb.BlogPostLive do
             </div>
             <div class="form-actions">
               <button phx-click="save" class="terminal-btn save-btn"><span class="prompt-symbol">&gt;</span> save</button>
-              <.link navigate={~p"/blog"} class="terminal-btn cancel-btn"><span class="prompt-symbol">&gt;</span> back to list</.link>
+              <.link navigate={~p"/content/blog"} class="terminal-btn cancel-btn"><span class="prompt-symbol">&gt;</span> back to list</.link>
             </div>
 
             <%= if @form_data["content"] && @form_data["content"] != "" do %>
@@ -181,7 +165,6 @@ defmodule PhoenixDashboardWeb.BlogPostLive do
                 <pre style="white-space: pre-wrap; font-size: 0.8rem; color: var(--ctp-subtext1); font-family: 'JetBrains Mono', monospace;">{@form_data["content"]}</pre>
               </div>
             <% end %>
-          </div>
         </div>
       </div>
     </div>

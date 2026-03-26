@@ -32,13 +32,17 @@ defmodule PhoenixDashboardWeb.Router do
     pipe_through [:browser, :authenticated]
 
     live "/", DashboardLive
-    live "/analytics", AnalyticsLive
-    live "/skills", SkillsLive
-    live "/skills/analytics", SkillAnalyticsLive
-    live "/projects", ProjectsLive
-    live "/experience", ExperienceLive
-    live "/certifications", CertificationsLive
-    live "/blog", BlogLive
-    live "/blog/:id/edit", BlogPostLive
+
+    # Content management
+    live "/content/skills", SkillsLive
+    live "/content/projects", ProjectsLive
+    live "/content/experience", ExperienceLive
+    live "/content/certifications", CertificationsLive
+    live "/content/blog", BlogLive
+    live "/content/blog/:id/edit", BlogPostLive
+
+    # Insights / Analytics
+    live "/insights/visitors", AnalyticsLive
+    live "/insights/skills", SkillAnalyticsLive
   end
 end

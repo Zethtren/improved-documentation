@@ -44,12 +44,21 @@ pub struct CertificationData {
 
 #[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
 pub struct BlogPostData {
+    pub id: Option<String>,
     pub title: String,
     pub slug: String,
     pub content: String,
     pub published: Option<String>,
     pub tags: Vec<String>,
     pub draft: Option<bool>,
+}
+
+#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
+pub struct RecommendedLink {
+    pub title: String,
+    pub description: Option<String>,
+    pub url: String,
+    pub source: Option<String>,
 }
 
 // ── Server Functions ─────────────────────────────────────────────────
@@ -146,6 +155,17 @@ pub async fn get_blog_post(slug: String) -> Result<Option<BlogPostData>, ServerF
     let posts: Vec<BlogPostData> =
         serde_json::from_value(result).map_err(|e| ServerFnError::new(e.to_string()))?;
     Ok(posts.into_iter().next())
+}
+
+#[server]
+pub async fn get_recommendations(blog_post_id: String) -> Result<Vec<RecommendedLink>, ServerFnError> {
+    let result = crate::db::query_surreal(
+        &format!("SELECT * FROM recommended_link WHERE blog_post_id = '{}' ORDER BY relevance_score DESC;",
+            blog_post_id.replace('\'', ""))
+    ).await.map_err(|e| ServerFnError::new(e))?;
+    let links: Vec<RecommendedLink> = serde_json::from_value(result)
+        .map_err(|e| ServerFnError::new(e.to_string()))?;
+    Ok(links)
 }
 
 // ── Fallback Data ────────────────────────────────────────────────────
@@ -1199,6 +1219,41 @@ fn Blog() -> impl IntoView {
 // ── Blog Post Detail ─────────────────────────────────────────────────
 
 #[component]
+fn BlogPostRecommendations(post_id: String) -> impl IntoView {
+    let recs = Resource::new(move || post_id.clone(), |id| get_recommendations(id));
+
+    view! {
+        <Suspense fallback=|| view! {}>
+            {move || recs.get().map(|result| {
+                match result {
+                    Ok(links) if !links.is_empty() => {
+                        view! {
+                            <div class="recommendations">
+                                <p class="rec-disclaimer">
+                                    "AI-curated related reading \u{2014} not endorsed by the author"
+                                </p>
+                                {links.into_iter().map(|link| {
+                                    let desc = link.description.clone();
+                                    view! {
+                                        <div class="rec-item">
+                                            <span class="rec-title">{link.title}</span>
+                                            {desc.map(|d| view! {
+                                                <span class="rec-desc">" \u{2014} " {d}</span>
+                                            })}
+                                        </div>
+                                    }
+                                }).collect_view()}
+                            </div>
+                        }.into_any()
+                    }
+                    _ => view! { <div /> }.into_any()
+                }
+            })}
+        </Suspense>
+    }
+}
+
+#[component]
 fn BlogPost() -> impl IntoView {
     let params = leptos_router::hooks::use_params_map();
     let slug = move || params.get().get("slug").unwrap_or_default();
@@ -1211,10 +1266,12 @@ fn BlogPost() -> impl IntoView {
                     Ok(Some(p)) => {
                         let file_name = format!("blog/{}.md", p.slug);
                         let content = p.content.clone();
+                        let post_id = p.id.clone().unwrap_or_default();
 
                         view! {
                             <Section title="blog">
                                 <DynBatView file=file_name content=content />
+                                <BlogPostRecommendations post_id=post_id />
                                 <br />
                                 <div class="hero-links">
                                     <a href="/blog">"$ ls blog/"</a>
