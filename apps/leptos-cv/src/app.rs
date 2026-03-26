@@ -1234,15 +1234,9 @@ fn BlogPostRecommendations(post_id: String) -> impl IntoView {
                                 </p>
                                 {links.into_iter().map(|link| {
                                     let desc = link.description.clone();
-                                    let url = link.url.clone();
-                                    let has_url = url != "#" && !url.is_empty();
                                     view! {
                                         <div class="rec-item">
-                                            {if has_url {
-                                                view! { <a href=url target="_blank" class="rec-title">{link.title}</a> }.into_any()
-                                            } else {
-                                                view! { <span class="rec-title">{link.title}</span> }.into_any()
-                                            }}
+                                            <a href=link.url target="_blank" rel="noopener" class="rec-title">{link.title}</a>
                                             {desc.map(|d| view! {
                                                 <span class="rec-desc">" \u{2014} " {d}</span>
                                             })}

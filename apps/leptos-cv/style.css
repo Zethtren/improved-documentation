@@ -1590,8 +1590,20 @@ a:hover {
     font-size: 0.8rem;
 }
 
-.rec-title {
+a.rec-title {
     color: var(--ctp-blue);
+    text-decoration: none;
+}
+
+a.rec-title:hover {
+    color: var(--ctp-sapphire);
+    text-decoration: underline;
+    text-shadow: 0 0 4px var(--ctp-sapphire);
+}
+
+a.rec-title::before {
+    content: "→ ";
+    color: var(--ctp-green);
 }
 
 .rec-desc {
