@@ -133,6 +133,12 @@ defmodule PhoenixDashboardWeb.ExperienceLive do
   def render(assigns) do
     ~H"""
     <div class="dashboard">
+      <div class="nav-back">
+        <.link navigate={~p"/"} class="terminal-btn">
+          <span class="prompt-symbol">&lt;</span> dashboard
+        </.link>
+      </div>
+
       <div class="terminal-window">
         <div class="terminal-titlebar">
           <span class="terminal-dot red"></span>

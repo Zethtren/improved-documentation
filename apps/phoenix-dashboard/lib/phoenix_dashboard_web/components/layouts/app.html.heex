@@ -11,6 +11,7 @@
       <.link navigate={~p"/projects"} class="header-link">projects</.link>
       <.link navigate={~p"/experience"} class="header-link">experience</.link>
       <.link navigate={~p"/certifications"} class="header-link">certifications</.link>
+      <.link navigate={~p"/blog"} class="header-link">blog</.link>
     </div>
   </header>
 
@@ -27,6 +28,7 @@
       <.link navigate={~p"/projects"} class="tmux-tab">projects</.link>
       <.link navigate={~p"/experience"} class="tmux-tab">experience</.link>
       <.link navigate={~p"/certifications"} class="tmux-tab">certs</.link>
+      <.link navigate={~p"/blog"} class="tmux-tab">blog</.link>
     </span>
     <span class="tmux-right">{DateTime.utc_now() |> Calendar.strftime("%H:%M %Z")}</span>
   </footer>

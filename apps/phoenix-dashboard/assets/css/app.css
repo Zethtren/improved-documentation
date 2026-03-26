@@ -684,3 +684,53 @@ select.inline-input {
         gap: 0.5rem;
     }
 }
+
+/* ===== Nav Back ===== */
+
+.nav-back {
+    margin-bottom: 0.5rem;
+}
+
+/* ===== CRUD Form Layout ===== */
+
+.form-row {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.form-label {
+    color: var(--ctp-mauve);
+    font-weight: 700;
+    font-size: 0.8rem;
+    min-width: 12ch;
+    flex-shrink: 0;
+    text-align: right;
+}
+
+.form-actions {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 0.25rem;
+    padding-left: calc(12ch + 0.5rem);
+}
+
+select.inline-input {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 0.8rem;
+    background: var(--ctp-surface0);
+    color: var(--ctp-text);
+    border: 1px solid var(--ctp-surface1);
+    padding: 0.2rem 0.4rem;
+    border-radius: 2px;
+}
+
+select.inline-input:focus {
+    border-color: var(--ctp-green);
+    outline: none;
+}
+
+select.inline-input option {
+    background: var(--ctp-mantle);
+    color: var(--ctp-text);
+}

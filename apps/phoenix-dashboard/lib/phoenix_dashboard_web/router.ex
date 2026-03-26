@@ -37,5 +37,7 @@ defmodule PhoenixDashboardWeb.Router do
     live "/projects", ProjectsLive
     live "/experience", ExperienceLive
     live "/certifications", CertificationsLive
+    live "/blog", BlogLive
+    live "/blog/:id/edit", BlogPostLive
   end
 end

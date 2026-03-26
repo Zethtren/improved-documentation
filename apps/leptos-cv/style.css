@@ -1085,6 +1085,56 @@ a:hover {
 .bat-emphasis { color: var(--ctp-green); font-style: italic; }
 .bat-fence { color: var(--ctp-overlay0); }
 
+/* Code block: language label above, highlighted background */
+.bat-fence-open {
+    display: block;
+    background: var(--ctp-surface0);
+    border: 1px solid var(--ctp-surface1);
+    border-bottom: none;
+    border-radius: 4px 4px 0 0;
+    padding: 0.15rem 0.5rem;
+    margin-top: 0.15rem;
+}
+
+.bat-fence-lang-label {
+    color: var(--ctp-peach);
+    font-weight: 700;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.bat-fence-close {
+    display: block;
+    height: 0;
+    border-bottom: 1px solid var(--ctp-surface1);
+    margin-bottom: 0.15rem;
+}
+
+.bat-code {
+    color: var(--ctp-text);
+    font-family: "JetBrains Mono", monospace;
+}
+
+.bat-code-comment {
+    color: var(--ctp-overlay2);
+    font-family: "Victor Mono", "JetBrains Mono", monospace;
+    font-style: italic;
+}
+
+.bat-line-code {
+    background: var(--ctp-surface0);
+    border-left: 2px solid var(--ctp-surface2);
+}
+
+.bat-line-code .bat-gutter {
+    color: var(--ctp-overlay0);
+}
+
+.bat-line-code .bat-sep {
+    color: var(--ctp-surface2);
+}
+
 /* ===== Interactive Terminal ===== */
 
 .interactive-terminal {
@@ -1249,7 +1299,7 @@ a:hover {
     background: var(--ctp-surface0);
 }
 
-.tui-tabs-left a.active,
+.tui-tabs-left a.tui-tab.active,
 .tui-tabs-left a[aria-current="page"] {
     color: var(--ctp-green);
     background: var(--ctp-mantle);

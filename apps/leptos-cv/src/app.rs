@@ -42,6 +42,16 @@ pub struct CertificationData {
     pub date: String,
 }
 
+#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
+pub struct BlogPostData {
+    pub title: String,
+    pub slug: String,
+    pub content: String,
+    pub published: Option<String>,
+    pub tags: Vec<String>,
+    pub draft: Option<bool>,
+}
+
 // ── Server Functions ─────────────────────────────────────────────────
 
 #[server]
@@ -109,6 +119,33 @@ pub async fn get_certifications() -> Result<Vec<CertificationData>, ServerFnErro
     let certs: Vec<CertificationData> =
         serde_json::from_value(result).map_err(|e| ServerFnError::new(e.to_string()))?;
     Ok(certs)
+}
+
+#[server]
+pub async fn get_blog_posts() -> Result<Vec<BlogPostData>, ServerFnError> {
+    let result = crate::db::query_surreal(
+        "SELECT * FROM blog_post WHERE draft = false ORDER BY published DESC;",
+    )
+    .await
+    .map_err(|e| ServerFnError::new(e))?;
+
+    let posts: Vec<BlogPostData> =
+        serde_json::from_value(result).map_err(|e| ServerFnError::new(e.to_string()))?;
+    Ok(posts)
+}
+
+#[server]
+pub async fn get_blog_post(slug: String) -> Result<Option<BlogPostData>, ServerFnError> {
+    let result = crate::db::query_surreal(&format!(
+        "SELECT * FROM blog_post WHERE slug = '{}' AND draft = false LIMIT 1;",
+        slug.replace('\'', "")
+    ))
+    .await
+    .map_err(|e| ServerFnError::new(e))?;
+
+    let posts: Vec<BlogPostData> =
+        serde_json::from_value(result).map_err(|e| ServerFnError::new(e.to_string()))?;
+    Ok(posts.into_iter().next())
 }
 
 // ── Fallback Data ────────────────────────────────────────────────────
@@ -303,7 +340,7 @@ pub fn shell(options: LeptosOptions) -> impl IntoView {
                 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/mshaugh/nerdfont-webfonts@v3.3.0/build/nerdfont-webfonts.min.css" />
                 <link rel="preconnect" href="https://fonts.googleapis.com" />
                 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="" />
-                <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" />
+                <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Victor+Mono:ital,wght@0,400;1,400&display=swap" rel="stylesheet" />
             </head>
             <body>
                 <App />
@@ -391,7 +428,7 @@ pub fn App() -> impl IntoView {
                         <span class="terminal-dot red" />
                         <span class="terminal-dot yellow" />
                         <span class="terminal-dot green" />
-                        <span class="titlebar-path">"houston@zethtren.xyz: ~"</span>
+                        <span class="titlebar-path">"contact@houstonbova.com: ~"</span>
                     </div>
                     <div class="terminal-body terminal-main-body">
                         <Nav theme=theme writer=set_theme />
@@ -402,6 +439,8 @@ pub fn App() -> impl IntoView {
                                 <Route path=path!("/") view=Home />
                                 <Route path=path!("/about") view=About />
                                 <Route path=path!("/portfolio") view=Portfolio />
+                                <Route path=path!("/blog") view=Blog />
+                                <Route path=path!("/blog/:slug") view=BlogPost />
                             </Routes>
                         </div>
                         <StatusBar />
@@ -421,12 +460,25 @@ fn Nav(
 ) -> impl IntoView {
     let flavors: [&'static str; 4] = ["latte", "frappe", "macchiato", "mocha"];
 
+    let location = leptos_router::hooks::use_location();
+    let path = move || location.pathname.get();
+
+    let tab_class = move |href: &'static str| {
+        let p = path();
+        if (href == "/" && p == "/") || (href != "/" && p.starts_with(href)) {
+            "tui-tab active"
+        } else {
+            "tui-tab"
+        }
+    };
+
     view! {
         <nav class="tui-tabs">
             <div class="tui-tabs-left">
-                <A href="/">"0:home"</A>
-                <A href="/about">"1:about"</A>
-                <A href="/portfolio">"2:portfolio"</A>
+                <a href="/" class=move || tab_class("/")>"0:home"</a>
+                <a href="/about" class=move || tab_class("/about")>"1:about"</a>
+                <a href="/portfolio" class=move || tab_class("/portfolio")>"2:portfolio"</a>
+                <a href="/blog" class=move || tab_class("/blog")>"3:blog"</a>
             </div>
             <div class="tui-tabs-right">
                 <div class="theme-switcher">
@@ -466,7 +518,7 @@ fn StatusBar() -> impl IntoView {
         <div class="tmux-bar">
             <span class="tmux-left">"[houston]"</span>
             <span class="tmux-center">"Built with Leptos · Styled with Catppuccin"</span>
-            <span class="tmux-right">"zethtren.xyz"</span>
+            <span class="tmux-right">"houstonbova.com"</span>
         </div>
     }
 }
@@ -491,11 +543,69 @@ fn Section(title: &'static str, #[prop(optional)] cmd: Option<&'static str>, chi
 
 // ── Bat-style file viewer ───────────────────────────────────────────
 
+fn render_bat_lines(lines: &[&str]) -> Vec<impl IntoView> {
+    let total = lines.len();
+    let gutter_width = format!("{}", total).len();
+    let mut in_code_block = false;
+    let mut code_lang = String::new();
+
+    lines.iter().enumerate().map(|(i, line)| {
+        let num = i + 1;
+        let padded = format!("{:>width$}", num, width = gutter_width);
+
+        let colored = if line.starts_with("```") {
+            if !in_code_block {
+                in_code_block = true;
+                code_lang = line.trim_start_matches('`').trim().to_string();
+                let label = if code_lang.is_empty() { "code".to_string() } else { code_lang.clone() };
+                view! {
+                    <span class="bat-fence-open">
+                        <span class="bat-fence-lang-label">{label}</span>
+                    </span>
+                }.into_any()
+            } else {
+                in_code_block = false;
+                code_lang.clear();
+                view! { <span class="bat-fence-close" /> }.into_any()
+            }
+        } else if in_code_block {
+            let trimmed = line.trim();
+            if trimmed.starts_with("//") || trimmed.starts_with("#") && !trimmed.starts_with("#!") || trimmed.starts_with("--") {
+                view! { <span class="bat-code-comment">{line.to_string()}</span> }.into_any()
+            } else {
+                view! { <span class="bat-code">{line.to_string()}</span> }.into_any()
+            }
+        } else if line.starts_with("# ") {
+            view! { <span class="bat-h1">{line.to_string()}</span> }.into_any()
+        } else if line.starts_with("## ") {
+            view! { <span class="bat-h2">{line.to_string()}</span> }.into_any()
+        } else if line.starts_with("### ") {
+            view! { <span class="bat-h2">{line.to_string()}</span> }.into_any()
+        } else if line.starts_with("- ") || line.starts_with("* ") {
+            let bullet = &line[..2];
+            let rest = &line[2..];
+            view! { <span class="bat-bullet">{bullet.to_string()}</span><span class="bat-text">{rest.to_string()}</span> }.into_any()
+        } else if line.starts_with("**") || line.starts_with("> ") {
+            view! { <span class="bat-emphasis">{line.to_string()}</span> }.into_any()
+        } else if line.trim().is_empty() {
+            view! { <span>{" "}</span> }.into_any()
+        } else {
+            view! { <span class="bat-text">{line.to_string()}</span> }.into_any()
+        };
+
+        view! {
+            <div class=if in_code_block && !line.starts_with("```") { "bat-line bat-line-code" } else { "bat-line" }>
+                <span class="bat-gutter">{padded}</span>
+                <span class="bat-sep">"│"</span>
+                {colored}
+            </div>
+        }
+    }).collect::<Vec<_>>()
+}
+
 #[component]
 fn BatView(file: &'static str, content: &'static str) -> impl IntoView {
     let lines: Vec<&str> = content.lines().collect();
-    let total = lines.len();
-    let gutter_width = format!("{}", total).len();
 
     view! {
         <div class="bat-view">
@@ -505,37 +615,30 @@ fn BatView(file: &'static str, content: &'static str) -> impl IntoView {
             </div>
             <div class="bat-ruler" />
             <div class="bat-content">
-                {lines.into_iter().enumerate().map(|(i, line)| {
-                    let num = i + 1;
-                    let padded = format!("{:>width$}", num, width = gutter_width);
+                {render_bat_lines(&lines)}
+            </div>
+            <div class="bat-ruler" />
+        </div>
+    }
+}
 
-                    // Simple markdown syntax coloring
-                    let colored = if line.starts_with("# ") {
-                        view! { <span class="bat-h1">{line}</span> }.into_any()
-                    } else if line.starts_with("## ") {
-                        view! { <span class="bat-h2">{line}</span> }.into_any()
-                    } else if line.starts_with("- ") || line.starts_with("* ") {
-                        let bullet = &line[..2];
-                        let rest = &line[2..];
-                        view! { <span class="bat-bullet">{bullet}</span><span class="bat-text">{rest}</span> }.into_any()
-                    } else if line.starts_with("**") || line.starts_with("> ") {
-                        view! { <span class="bat-emphasis">{line}</span> }.into_any()
-                    } else if line.starts_with("```") {
-                        view! { <span class="bat-fence">{line}</span> }.into_any()
-                    } else if line.trim().is_empty() {
-                        view! { <span>{" "}</span> }.into_any()
-                    } else {
-                        view! { <span class="bat-text">{line}</span> }.into_any()
-                    };
+/// Dynamic bat viewer for runtime content (blog posts)
+#[component]
+pub fn DynBatView(
+    #[prop(into)] file: String,
+    #[prop(into)] content: String,
+) -> impl IntoView {
+    let lines: Vec<&str> = content.lines().collect();
 
-                    view! {
-                        <div class="bat-line">
-                            <span class="bat-gutter">{padded}</span>
-                            <span class="bat-sep">"│"</span>
-                            {colored}
-                        </div>
-                    }
-                }).collect_view()}
+    view! {
+        <div class="bat-view">
+            <div class="bat-header">
+                <span class="bat-header-label">"File: "</span>
+                <span class="bat-header-file">{file.clone()}</span>
+            </div>
+            <div class="bat-ruler" />
+            <div class="bat-content">
+                {render_bat_lines(&lines)}
             </div>
             <div class="bat-ruler" />
         </div>
@@ -562,8 +665,8 @@ that don't get in the way.
 - **portfolio** — $ ls projects/" />
             <br />
             <div class="hero-links">
-                <A href="/about">"$ bat about.md"</A>
-                <A href="/portfolio">"$ ls projects/"</A>
+                <a href="/about">"$ bat about.md"</a>
+                <a href="/portfolio">"$ ls projects/"</a>
             </div>
         </Section>
 
@@ -573,9 +676,9 @@ that don't get in the way.
                     <pre class="fetch-logo">{FETCH_LOGO}</pre>
                 </div>
                 <div class="fetch-info">
-                    <div class="fetch-title">"houston"<span class="fetch-at">"@"</span>"zethtren.xyz"</div>
+                    <div class="fetch-title">"contact"<span class="fetch-at">"@"</span>"houstonbova.com"</div>
                     <div class="fetch-sep" />
-                    <div class="fetch-row"><span class="fetch-key">"Contact"</span>" Houston@Zethtren.xyz"</div>
+                    <div class="fetch-row"><span class="fetch-key">"Contact"</span>" contact@houstonbova.com"</div>
                     <div class="fetch-row"><span class="fetch-key">"Languages"</span>" Python, Rust, Go, SQL"</div>
                     <div class="fetch-row"><span class="fetch-key">"Infra"</span>" GCP, Docker, Kubernetes"</div>
                     <div class="fetch-row"><span class="fetch-key">"GitHub"</span>" "<a href="https://github.com/Zethtren" target="_blank">"github.com/Zethtren"</a></div>
@@ -847,6 +950,153 @@ fn Portfolio() -> impl IntoView {
                 })}
             </Suspense>
         </Section>
+    }
+}
+
+// ── Blog Listing ─────────────────────────────────────────────────────
+
+#[component]
+fn Blog() -> impl IntoView {
+    let posts = Resource::new(|| (), |_| get_blog_posts());
+
+    view! {
+        <Section title="blog" cmd="eza -l --icons ~/blog/">
+            <Suspense fallback=move || view! { <p class="prompt">"Loading..."</p> }>
+                {move || posts.get().map(|result| {
+                    let post_list = match result {
+                        Ok(p) => p,
+                        Err(_) => vec![],
+                    };
+
+                    if post_list.is_empty() {
+                        view! {
+                            <p class="prompt">"No published posts yet. Check back soon."</p>
+                        }.into_any()
+                    } else {
+                        view! {
+                            <ul class="eza-list">
+                                {post_list
+                                    .into_iter()
+                                    .map(|p| {
+                                        let date = p.published.clone().unwrap_or_default();
+                                        let date_short = if date.len() >= 10 { &date[..10] } else { &date };
+                                        let tags_str = if p.tags.is_empty() {
+                                            String::new()
+                                        } else {
+                                            format!(" [{}]", p.tags.join(", "))
+                                        };
+                                        let slug = p.slug.clone();
+                                        let href = format!("/blog/{}", slug);
+                                        view! {
+                                            <li>
+                                                <span class="eza-date">{date_short.to_string()}</span>
+                                                <a href=href class="eza-name">{p.title.clone()}</a>
+                                                <span class="eza-issuer">{tags_str}</span>
+                                            </li>
+                                        }
+                                    })
+                                    .collect_view()}
+                            </ul>
+                        }.into_any()
+                    }
+                })}
+            </Suspense>
+        </Section>
+    }
+}
+
+// ── Blog Post Detail ─────────────────────────────────────────────────
+
+#[component]
+fn BlogPost() -> impl IntoView {
+    let params = leptos_router::hooks::use_params_map();
+    let slug = move || params.get().get("slug").unwrap_or_default();
+    let post = Resource::new(slug, |s| get_blog_post(s));
+
+    view! {
+        <Suspense fallback=move || view! { <p class="prompt">"Loading..."</p> }>
+            {move || post.get().map(|result| {
+                match result {
+                    Ok(Some(p)) => {
+                        let file_name = format!("blog/{}.md", p.slug);
+                        let lines: Vec<String> = p.content.lines().map(|l| l.to_string()).collect();
+                        let total = lines.len();
+                        let gutter_width = format!("{}", total).len();
+
+                        view! {
+                            <Section title="blog">
+                                <div class="bat-view">
+                                    <div class="bat-header">
+                                        <span class="bat-header-label">"File: "</span>
+                                        <span class="bat-header-file">{file_name}</span>
+                                    </div>
+                                    <div class="bat-ruler" />
+                                    <div class="bat-content">
+                                        {lines.into_iter().enumerate().map(|(i, line)| {
+                                            let num = i + 1;
+                                            let padded = format!("{:>width$}", num, width = gutter_width);
+
+                                            let colored = if line.starts_with("# ") {
+                                                view! { <span class="bat-h1">{line.clone()}</span> }.into_any()
+                                            } else if line.starts_with("## ") {
+                                                view! { <span class="bat-h2">{line.clone()}</span> }.into_any()
+                                            } else if line.starts_with("- ") || line.starts_with("* ") {
+                                                let bullet = line[..2].to_string();
+                                                let rest = line[2..].to_string();
+                                                view! { <span class="bat-bullet">{bullet}</span><span class="bat-text">{rest}</span> }.into_any()
+                                            } else if line.starts_with("**") || line.starts_with("> ") {
+                                                view! { <span class="bat-emphasis">{line.clone()}</span> }.into_any()
+                                            } else if line.starts_with("```") {
+                                                view! { <span class="bat-fence">{line.clone()}</span> }.into_any()
+                                            } else if line.trim().is_empty() {
+                                                view! { <span>{" "}</span> }.into_any()
+                                            } else {
+                                                view! { <span class="bat-text">{line.clone()}</span> }.into_any()
+                                            };
+
+                                            view! {
+                                                <div class="bat-line">
+                                                    <span class="bat-gutter">{padded}</span>
+                                                    <span class="bat-sep">"│"</span>
+                                                    {colored}
+                                                </div>
+                                            }
+                                        }).collect_view()}
+                                    </div>
+                                    <div class="bat-ruler" />
+                                </div>
+                                <br />
+                                <div class="hero-links">
+                                    <a href="/blog">"$ ls blog/"</a>
+                                </div>
+                            </Section>
+                        }.into_any()
+                    }
+                    Ok(None) => {
+                        view! {
+                            <Section title="blog">
+                                <p class="prompt">"Post not found."</p>
+                                <br />
+                                <div class="hero-links">
+                                    <a href="/blog">"$ ls blog/"</a>
+                                </div>
+                            </Section>
+                        }.into_any()
+                    }
+                    Err(_) => {
+                        view! {
+                            <Section title="blog">
+                                <p class="prompt">"Error loading post."</p>
+                                <br />
+                                <div class="hero-links">
+                                    <a href="/blog">"$ ls blog/"</a>
+                                </div>
+                            </Section>
+                        }.into_any()
+                    }
+                }
+            })}
+        </Suspense>
     }
 }
 

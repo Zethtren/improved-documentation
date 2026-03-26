@@ -22,6 +22,7 @@ const FILES: &[&str] = &[
     "experience/", "experience/nicular.md", "experience/johnson-group.md",
     "experience/yawye.md", "experience/general-assembly.md",
     "projects/", "education/", "education/certifications.md",
+    "blog/",
     "nicular.md", "johnson-group.md", "yawye.md", "general-assembly.md",
     "languages.md", "infra.md", "tools.md", "ml.md", "certifications.md",
 ];
@@ -146,7 +147,7 @@ pub fn InteractiveTerminal() -> impl IntoView {
 
                     set_history.update(|h| {
                         h.push(TerminalLine {
-                            prompt: Some("visitor@houston:~$".to_string()),
+                            prompt: Some("visitor@houstonbova.com:~$".to_string()),
                             content: cmd.clone(),
                             is_error: false,
                             syntax: None,
@@ -241,7 +242,7 @@ pub fn InteractiveTerminal() -> impl IntoView {
                 }}
 
                 <div class="terminal-input-line">
-                    <span class="term-prompt">"visitor@houston:~$"</span>
+                    <span class="term-prompt">"visitor@houstonbova.com:~$"</span>
                     <span class="term-typed">{move || format!(" {}", input.get())}</span>
                     <span class="cursor" />
                 </div>
@@ -345,7 +346,7 @@ fn execute_command(cmd: &str) -> Vec<TerminalLine> {
             line(""),
         ],
         "neofetch" => vec![
-            line("houston@zethtren.xyz"),
+            line("contact@houstonbova.com"),
             line("---------------------"),
             line("OS:        leptos-cv 0.1.0 (WASM)"),
             line("Host:      Catppuccin Terminal v1"),
@@ -369,6 +370,7 @@ fn execute_command(cmd: &str) -> Vec<TerminalLine> {
                     ("d ", "experience/"),
                     ("d ", "projects/"),
                     ("d ", "education/"),
+                    ("d ", "blog/"),
                     ("  ", "README.md"),
                     ("  ", "about.md"),
                     ("  ", "contact.md"),
@@ -397,6 +399,13 @@ fn execute_command(cmd: &str) -> Vec<TerminalLine> {
                     ("  ", "general-assembly.md"),
                     ("  ", "certifications.md"),
                 ]),
+                "blog" | "blog/" | "blogs" | "blogs/" => vec![
+                    line("Blog posts are loaded from the database."),
+                    line("Visit /blog for the full listing."),
+                    line(""),
+                    line("Hint: try 'bat blog/hello-world.md' or visit /blog in the browser."),
+                    line(""),
+                ],
                 _ => vec![
                     err(&format!("eza: '{}': No such file or directory", path)),
                     line(""),
@@ -442,7 +451,7 @@ fn execute_command(cmd: &str) -> Vec<TerminalLine> {
                 "contact.md" => bat_output("contact.md", &[
                     "# Contact",
                     "",
-                    "- **Email**  — Houston@Zethtren.xyz",
+                    "- **Email**  — contact@houstonbova.com",
                     "- **GitHub** — https://github.com/Zethtren",
                 ]),
                 "skills/languages.md" | "languages.md" => bat_output("skills/languages.md", &[
@@ -532,6 +541,14 @@ fn execute_command(cmd: &str) -> Vec<TerminalLine> {
                     err("bat: missing operand. Try 'bat README.md' or 'bat about.md'"),
                     line(""),
                 ],
+                _ if file.starts_with("blog/") => {
+                    let slug = file.trim_start_matches("blog/").trim_end_matches(".md");
+                    vec![
+                        line(&format!("Blog posts are dynamically loaded from the database.")),
+                        line(&format!("To read '{}', visit /blog/{} in your browser.", file, slug)),
+                        line(""),
+                    ]
+                },
                 _ => vec![
                     err(&format!("bat: {}: No such file or directory", file)),
                     line(""),
@@ -616,7 +633,7 @@ fn execute_command(cmd: &str) -> Vec<TerminalLine> {
                     line("  ╔══════════════════════════════════════╗"),
                     line("  ║       ACCESS GRANTED                 ║"),
                     line("  ╠══════════════════════════════════════╣"),
-                    line("  ║  Email:  Houston@Zethtren.xyz        ║"),
+                    line("  ║  Email:  contact@houstonbova.com        ║"),
                     line("  ║  GitHub: github.com/Zethtren         ║"),
                     line("  ╚══════════════════════════════════════╝"),
                     line(""),
@@ -660,7 +677,7 @@ fn execute_command(cmd: &str) -> Vec<TerminalLine> {
             line(""),
         ],
         "ssh" => vec![
-            err("Connection refused. But you can reach me at Houston@Zethtren.xyz"),
+            err("Connection refused. But you can reach me at contact@houstonbova.com"),
             line(""),
         ],
         "clear" => vec![],
