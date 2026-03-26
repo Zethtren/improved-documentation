@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: leptos-cv
+  namespace: houston-cv
+  labels:
+    app: leptos-cv
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: leptos-cv
+  template:
+    metadata:
+      labels:
+        app: leptos-cv
+    spec:
+      containers:
+        - name: leptos-cv
+          image: houston-cv/leptos-cv:latest
+          ports:
+            - containerPort: 8080
+          env:
+            - name: SURREALDB_URL
+              value: "ws://surrealdb:8000"
+            - name: LEPTOS_SITE_ADDR
+              value: "0.0.0.0:8080"
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 8080
+            initialDelaySeconds: 10
+            periodSeconds: 15

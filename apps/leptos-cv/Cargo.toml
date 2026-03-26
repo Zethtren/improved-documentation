@@ -1,0 +1,56 @@
+[package]
+name = "leptos-cv"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[dependencies]
+leptos = { version = "0.7" }
+leptos_router = { version = "0.7" }
+leptos_meta = { version = "0.7" }
+serde = { version = "1", features = ["derive"] }
+
+# SSR dependencies
+leptos_axum = { version = "0.7", optional = true }
+axum = { version = "0.7", optional = true }
+tokio = { version = "1", features = ["full"], optional = true }
+tower = { version = "0.5", optional = true }
+tower-http = { version = "0.6", features = ["cors", "fs"], optional = true }
+
+# Hydrate dependencies
+console_error_panic_hook = { version = "0.1", optional = true }
+web-sys = { version = "0.3", features = ["Storage", "Window"], optional = true }
+wasm-bindgen = { version = "0.2", optional = true }
+
+[features]
+hydrate = [
+    "leptos/hydrate",
+    "dep:console_error_panic_hook",
+    "dep:web-sys",
+    "dep:wasm-bindgen",
+]
+ssr = [
+    "leptos/ssr",
+    "leptos_router/ssr",
+    "leptos_meta/ssr",
+    "dep:leptos_axum",
+    "dep:axum",
+    "dep:tokio",
+    "dep:tower",
+    "dep:tower-http",
+]
+
+[package.metadata.leptos]
+output-name = "leptos-cv"
+site-root = "target/site"
+site-pkg-dir = "pkg"
+site-addr = "127.0.0.1:8080"
+reload-port = 3001
+browserquery = "defaults"
+watch-additional-files = ["style.css"]
+assets-dir = "assets"
+style-file = "style.css"
+bin-features = ["ssr"]
+lib-features = ["hydrate"]

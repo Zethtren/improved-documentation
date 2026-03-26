@@ -1,0 +1,13 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+# TODO: prod overlays
+# - Replace surrealdb-credentials secret with SealedSecrets or External Secrets
+# - Set proper resource requests/limits
+# - Configure HPA (Horizontal Pod Autoscaler) for leptos-cv and phoenix-dashboard
+# - Add TLS certificates to Ingress
+# - Set proper image tags (not :latest)
+# - Configure PodDisruptionBudgets
+
+resources:
+  - ../../base

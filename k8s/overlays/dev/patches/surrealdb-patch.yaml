@@ -1,0 +1,24 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: surrealdb
+  namespace: houston-cv
+spec:
+  volumeClaimTemplates: []
+  template:
+    spec:
+      containers:
+        - name: surrealdb
+          resources:
+            limits:
+              memory: "256Mi"
+              cpu: "100m"
+            requests:
+              memory: "256Mi"
+              cpu: "100m"
+          volumeMounts:
+            - name: surrealdb-data
+              mountPath: /data
+      volumes:
+        - name: surrealdb-data
+          emptyDir: {}

@@ -1,0 +1,56 @@
+version: "3.8"
+
+services:
+  surrealdb:
+    build: ./apps/surrealdb
+    ports:
+      - "8000:8000"
+    environment:
+      - SURREAL_USER=root
+      - SURREAL_PASS=root
+    volumes:
+      - surreal-data:/data
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  surrealdb-init:
+    build: ./apps/surrealdb
+    depends_on:
+      surrealdb:
+        condition: service_healthy
+    entrypoint: ["/opt/surrealdb/scripts/init.sh"]
+    environment:
+      - SURREAL_URL=http://surrealdb:8000
+      - SURREAL_USER=root
+      - SURREAL_PASS=root
+
+  leptos-cv:
+    build: ./apps/leptos-cv
+    ports:
+      - "8080:8080"
+    environment:
+      - SURREALDB_URL=ws://surrealdb:8000
+      - LEPTOS_SITE_ADDR=0.0.0.0:8080
+    depends_on:
+      surrealdb:
+        condition: service_healthy
+
+  phoenix-dashboard:
+    build: ./apps/phoenix-dashboard
+    ports:
+      - "4000:4000"
+    environment:
+      - SURREALDB_URL=http://surrealdb:8000
+      - SURREAL_USER=root
+      - SURREAL_PASS=root
+      - SECRET_KEY_BASE=dev-only-secret-key-base-that-is-at-least-64-bytes-long-for-phoenix-to-accept
+      - PHX_HOST=localhost
+    depends_on:
+      surrealdb:
+        condition: service_healthy
+
+volumes:
+  surreal-data:

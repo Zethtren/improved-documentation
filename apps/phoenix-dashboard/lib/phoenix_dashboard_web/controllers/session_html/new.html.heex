@@ -1,0 +1,59 @@
+<div class="login-container">
+  <div class="terminal-window login-window">
+    <div class="terminal-titlebar">
+      <span class="terminal-dot red"></span>
+      <span class="terminal-dot yellow"></span>
+      <span class="terminal-dot green"></span>
+      <span class="titlebar-text">houston-cv :: login</span>
+    </div>
+    <div class="terminal-body">
+      <div class="login-banner">
+        <pre class="ascii-art">╦ ╦╔═╗╦ ╦╔═╗╔╦╗╔═╗╔╗╔
+║ ║║ ║║ ║╚═╗ ║ ║ ║║║║
+╩ ╩╚═╝╚═╝╚═╝ ╩ ╚═╝╝╚╝</pre>
+        <p class="login-subtitle">admin dashboard v0.1.0</p>
+      </div>
+
+      <%= if @error do %>
+        <div class="login-error">
+          <span class="prompt-symbol">!</span> <%= @error %>
+        </div>
+      <% end %>
+
+      <form action={~p"/login"} method="post" class="login-form">
+        <input type="hidden" name="_csrf_token" value={get_csrf_token()} />
+
+        <div class="form-row">
+          <label for="session_username" class="prompt-label">login:</label>
+          <input
+            type="text"
+            id="session_username"
+            name="session[username]"
+            autocomplete="username"
+            autofocus
+            class="terminal-input"
+            placeholder="admin"
+          />
+        </div>
+
+        <div class="form-row">
+          <label for="session_password" class="prompt-label">password:</label>
+          <input
+            type="password"
+            id="session_password"
+            name="session[password]"
+            autocomplete="current-password"
+            class="terminal-input"
+            placeholder="••••••••"
+          />
+        </div>
+
+        <div class="form-row">
+          <button type="submit" class="login-btn">
+            <span class="prompt-symbol">&gt;</span> authenticate
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

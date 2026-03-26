@@ -1,0 +1,25 @@
+<div class="app-shell">
+  <header class="app-header">
+    <div class="header-left">
+      <span class="header-logo">houston-cv</span>
+      <span class="header-sep">|</span>
+      <span class="header-section">admin</span>
+    </div>
+    <div class="header-right">
+      <.link navigate={~p"/"} class="header-link">dashboard</.link>
+    </div>
+  </header>
+
+  <main class="app-main">
+    <.flash_group flash={@flash} />
+    {@inner_content}
+  </main>
+
+  <footer class="tmux-bar">
+    <span class="tmux-left">[0] houston-cv*</span>
+    <span class="tmux-center">
+      <.link navigate={~p"/"} class="tmux-tab active">dashboard</.link>
+    </span>
+    <span class="tmux-right">{DateTime.utc_now() |> Calendar.strftime("%H:%M %Z")}</span>
+  </footer>
+</div>

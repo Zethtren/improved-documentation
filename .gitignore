@@ -1,0 +1,23 @@
+# Rust
+**/target/
+**/*.rs.bk
+
+# Trunk build output
+**/dist/
+
+# Phoenix
+apps/phoenix-dashboard/_build/
+apps/phoenix-dashboard/deps/
+apps/phoenix-dashboard/priv/static/assets/
+
+# SurrealDB
+apps/surrealdb/data/
+
+# Environment / secrets
+.env
+.env.*
+*.pem
+*.key
+
+# OS
+.DS_Store

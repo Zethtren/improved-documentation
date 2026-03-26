@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: phoenix-dashboard
+  namespace: houston-cv
+  labels:
+    app: phoenix-dashboard
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: phoenix-dashboard
+  template:
+    metadata:
+      labels:
+        app: phoenix-dashboard
+    spec:
+      containers:
+        - name: phoenix-dashboard
+          image: houston-cv/phoenix-dashboard:latest
+          ports:
+            - containerPort: 4000
+          env:
+            - name: SURREALDB_URL
+              value: "http://surrealdb:8000"
+            - name: SECRET_KEY_BASE
+              value: "houston-cv-dev-secret-key-base-that-is-definitely-at-least-sixty-four-bytes-long-for-phoenix"
+            - name: PHX_HOST
+              value: "admin.localhost"
+            - name: PHX_SERVER
+              value: "true"
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 4000
+            initialDelaySeconds: 10
+            periodSeconds: 15

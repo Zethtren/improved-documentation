@@ -1,0 +1,21 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  - ../../base
+
+patches:
+  - path: patches/leptos-cv-patch.yaml
+  - path: patches/phoenix-patch.yaml
+  - path: patches/surrealdb-patch.yaml
+
+  # Remove NetworkPolicy in dev — not needed for local development
+  - target:
+      kind: NetworkPolicy
+      name: surrealdb-allow-apps-only
+    patch: |
+      $patch: delete
+      apiVersion: networking.k8s.io/v1
+      kind: NetworkPolicy
+      metadata:
+        name: surrealdb-allow-apps-only

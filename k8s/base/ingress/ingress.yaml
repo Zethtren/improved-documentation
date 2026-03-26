@@ -1,0 +1,30 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: houston-cv-ingress
+  namespace: houston-cv
+  labels:
+    project: houston-cv
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: cv.localhost
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: leptos-cv-svc
+                port:
+                  number: 80
+    - host: admin.localhost
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: phoenix-dashboard-svc
+                port:
+                  number: 80

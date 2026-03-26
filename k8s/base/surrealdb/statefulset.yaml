@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: surrealdb
+  namespace: houston-cv
+  labels:
+    app: surrealdb
+spec:
+  serviceName: surrealdb
+  replicas: 1
+  selector:
+    matchLabels:
+      app: surrealdb
+  template:
+    metadata:
+      labels:
+        app: surrealdb
+    spec:
+      containers:
+        - name: surrealdb
+          image: surrealdb/surrealdb:v2
+          args:
+            - "start"
+            - "-u"
+            - "root"
+            - "-p"
+            - "$(SURREAL_PASS)"
+            - "-b"
+            - "0.0.0.0:8000"
+            - "file:/data/srdb.db"
+          ports:
+            - containerPort: 8000
+          envFrom:
+            - secretRef:
+                name: surrealdb-credentials
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8000
+            initialDelaySeconds: 10
+            periodSeconds: 15
+          volumeMounts:
+            - name: surrealdb-data
+              mountPath: /data
+  volumeClaimTemplates:
+    - metadata:
+        name: surrealdb-data
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        storageClassName: standard
+        resources:
+          requests:
+            storage: 10Gi
