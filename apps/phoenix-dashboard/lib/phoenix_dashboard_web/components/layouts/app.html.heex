@@ -7,6 +7,10 @@
     </div>
     <div class="header-right">
       <.link navigate={~p"/"} class="header-link">dashboard</.link>
+      <.link navigate={~p"/skills"} class="header-link">skills</.link>
+      <.link navigate={~p"/projects"} class="header-link">projects</.link>
+      <.link navigate={~p"/experience"} class="header-link">experience</.link>
+      <.link navigate={~p"/certifications"} class="header-link">certifications</.link>
     </div>
   </header>
 
@@ -18,7 +22,11 @@
   <footer class="tmux-bar">
     <span class="tmux-left">[0] houston-cv*</span>
     <span class="tmux-center">
-      <.link navigate={~p"/"} class="tmux-tab active">dashboard</.link>
+      <.link navigate={~p"/"} class="tmux-tab">dashboard</.link>
+      <.link navigate={~p"/skills"} class="tmux-tab">skills</.link>
+      <.link navigate={~p"/projects"} class="tmux-tab">projects</.link>
+      <.link navigate={~p"/experience"} class="tmux-tab">experience</.link>
+      <.link navigate={~p"/certifications"} class="tmux-tab">certs</.link>
     </span>
     <span class="tmux-right">{DateTime.utc_now() |> Calendar.strftime("%H:%M %Z")}</span>
   </footer>

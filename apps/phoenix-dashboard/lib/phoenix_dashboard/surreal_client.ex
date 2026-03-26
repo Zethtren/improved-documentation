@@ -62,7 +62,7 @@ defmodule PhoenixDashboard.SurrealClient do
   end
 
   defp handle_response({:ok, %Req.Response{status: status, body: body}}) when status in 200..299 do
-    {:ok, body}
+    extract_result(body)
   end
 
   defp handle_response({:ok, %Req.Response{status: status, body: body}}) do
@@ -72,4 +72,14 @@ defmodule PhoenixDashboard.SurrealClient do
   defp handle_response({:error, reason}) do
     {:error, reason}
   end
+
+  defp extract_result(body) when is_list(body) do
+    case List.first(body) do
+      %{"status" => "OK", "result" => result} -> {:ok, result}
+      %{"status" => "ERR", "result" => error} -> {:error, error}
+      _ -> {:error, "Unexpected response format"}
+    end
+  end
+
+  defp extract_result(body), do: {:ok, body}
 end

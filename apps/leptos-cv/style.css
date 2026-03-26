@@ -541,7 +541,7 @@ body::after {
     position: relative;
     display: flex;
     flex-direction: column;
-    padding: 1.25rem 1rem 0.75rem;
+    padding: 1.25rem 1rem 1.5rem;
     border: 1px solid var(--ctp-overlay0);
     margin-right: -1px;
     margin-bottom: -1px;
@@ -633,83 +633,166 @@ body::after {
     color: var(--ctp-subtext1);
 }
 
+/* Skills: eza -l --icons style */
 .skill-list {
     list-style: none;
-    margin: 0.5rem 0 1.5rem;
+    margin: 0.5rem 0 1rem;
+    font-size: 0.85rem;
 }
 
 .skill-list li {
-    padding: 0.25rem 0;
+    padding: 0.15rem 0;
     color: var(--ctp-text);
+    display: flex;
+    gap: 0.5rem;
+    align-items: baseline;
 }
 
 .skill-list li::before {
-    content: "├── ";
+    content: ".rw-r--r--";
     color: var(--ctp-overlay0);
+    font-size: 0.75rem;
+    flex-shrink: 0;
 }
 
-.skill-list li:last-child::before {
-    content: "└── ";
-    color: var(--ctp-overlay0);
+/* Eza long listing style */
+.eza-list {
+    list-style: none;
+    margin: 0.5rem 0 1rem;
+    font-size: 0.85rem;
 }
 
-/* ===== Timeline ===== */
+.eza-list li {
+    padding: 0.15rem 0;
+    color: var(--ctp-text);
+    display: flex;
+    gap: 0.75rem;
+    align-items: baseline;
+}
+
+.eza-list li::before {
+    content: ".rw-r--r--";
+    color: var(--ctp-overlay0);
+    font-size: 0.75rem;
+    flex-shrink: 0;
+}
+
+.eza-date {
+    color: var(--ctp-blue);
+    min-width: 7ch;
+    flex-shrink: 0;
+}
+
+.eza-issuer {
+    color: var(--ctp-yellow);
+    min-width: 10ch;
+    flex-shrink: 0;
+}
+
+.eza-name, .exa-name {
+    color: var(--ctp-green);
+    font-weight: 700;
+}
+
+/* ===== Timeline (git log style) ===== */
 
 .timeline {
-    margin: 1rem 0 2rem;
-    padding-left: 1.5rem;
-    border-left: 2px solid var(--ctp-surface1);
+    margin: 0.5rem 0 1rem;
+    padding: 0;
+    border: none;
 }
 
 .timeline-item {
     position: relative;
-    margin-bottom: 1.5rem;
-    padding-left: 1rem;
+    margin-bottom: 1.25rem;
+    padding-left: 0;
+    padding-bottom: 1.25rem;
+    border-bottom: 1px dashed var(--ctp-surface0);
+}
+
+.timeline-item:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+    padding-bottom: 0;
 }
 
 .timeline-item::before {
-    content: "";
-    position: absolute;
-    left: -1.85rem;
-    top: 0.5rem;
-    width: 10px;
-    height: 10px;
-    background: var(--ctp-green);
-    border-radius: 50%;
-    border: 2px solid var(--ctp-mantle);
+    content: "* ";
+    position: static;
+    width: auto;
+    height: auto;
+    background: none;
+    border-radius: 0;
+    border: none;
+    color: var(--ctp-yellow);
+    font-weight: 700;
+    float: left;
+    margin-right: 0.25rem;
 }
 
 .timeline-date {
     font-size: 0.75rem;
     color: var(--ctp-overlay1);
+    display: inline;
+}
+
+.timeline-date::before {
+    content: "(";
+    color: var(--ctp-overlay0);
+}
+
+.timeline-date::after {
+    content: ")";
+    color: var(--ctp-overlay0);
 }
 
 .timeline-title {
-    font-size: 0.95rem;
-    color: var(--ctp-text);
+    font-size: 0.85rem;
+    color: var(--ctp-green);
     font-weight: 700;
+    display: inline;
+}
+
+.timeline-title::after {
+    content: " @ ";
+    color: var(--ctp-overlay0);
+    font-weight: 400;
 }
 
 .timeline-subtitle {
-    font-size: 0.8rem;
-    color: var(--ctp-subtext0);
+    font-size: 0.85rem;
+    color: var(--ctp-blue);
+    display: inline;
 }
 
 .timeline-desc {
-    font-size: 0.85rem;
+    font-size: 0.8rem;
     color: var(--ctp-subtext1);
-    margin-top: 0.25rem;
+    margin-top: 0.4rem;
+    padding-left: 1rem;
+    border-left: 1px solid var(--ctp-surface1);
 }
 
-/* ===== Tags (shared) ===== */
+/* ===== Tags (terminal-style) ===== */
 
 .tag {
     font-size: 0.7rem;
-    padding: 2px 8px;
-    border-radius: 3px;
-    background: var(--ctp-surface0);
-    color: var(--ctp-subtext1);
-    border: 1px solid var(--ctp-surface1);
+    padding: 0;
+    border-radius: 0;
+    background: none;
+    color: var(--ctp-mauve);
+    border: none;
+    font-family: "JetBrains Mono", monospace;
+}
+
+.tag::before {
+    content: "[";
+    color: var(--ctp-overlay0);
+}
+
+.tag::after {
+    content: "]";
+    color: var(--ctp-overlay0);
 }
 
 /* ===== Footer ===== */
@@ -765,5 +848,614 @@ body::after {
         left: -1.35rem;
         width: 8px;
         height: 8px;
+    }
+}
+
+/* ===== CRT Effects ===== */
+
+/* Phosphor text glow */
+.prompt {
+    text-shadow: 0 0 2px var(--ctp-green), 0 0 8px rgba(166,227,161,0.3);
+}
+
+.hero-ascii {
+    text-shadow: 0 0 3px var(--ctp-mauve), 0 0 10px rgba(203,166,247,0.2);
+}
+
+.fetch-logo {
+    text-shadow: 0 0 3px var(--ctp-mauve), 0 0 10px rgba(203,166,247,0.2);
+}
+
+.section-heading {
+    text-shadow: 0 0 2px var(--ctp-mauve), 0 0 6px rgba(203,166,247,0.15);
+}
+
+/* Enhanced vignette — CRT edge-darkening */
+body::before {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 9998;
+    background: radial-gradient(
+        ellipse at center,
+        transparent 60%,
+        rgba(0, 0, 0, 0.25) 85%,
+        rgba(0, 0, 0, 0.5) 100%
+    );
+}
+
+/* Cursor glow (Catppuccin Rosewater) */
+.cursor {
+    background-color: var(--ctp-rosewater);
+    box-shadow: 0 0 4px var(--ctp-rosewater), 0 0 8px rgba(245,224,220,0.3);
+}
+
+/* Terminal window subtle glow on hover */
+.terminal-window {
+    transition: box-shadow 0.3s ease;
+}
+
+.terminal-window:hover {
+    box-shadow: 0 0 15px rgba(203,166,247,0.1), 0 0 30px rgba(203,166,247,0.05);
+}
+
+/* Terminal dot glow */
+.terminal-dot.red { box-shadow: 0 0 3px var(--ctp-red); }
+.terminal-dot.yellow { box-shadow: 0 0 3px var(--ctp-yellow); }
+.terminal-dot.green { box-shadow: 0 0 3px var(--ctp-green); }
+
+/* Link hover glow */
+a:hover {
+    text-shadow: 0 0 4px var(--ctp-sapphire);
+}
+
+/* Tag hover effect */
+.tag {
+    transition: color 0.15s ease;
+}
+.tag:hover {
+    color: var(--ctp-green);
+    text-shadow: 0 0 6px rgba(166,227,161,0.3);
+}
+.tag:hover::before,
+.tag:hover::after {
+    color: var(--ctp-green);
+}
+
+/* Accessibility: reduced motion */
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+    body::after, body::before {
+        display: none !important;
+    }
+}
+
+/* Print stylesheet */
+@media print {
+    body {
+        background: white !important;
+        color: black !important;
+    }
+    body::after, body::before {
+        display: none !important;
+    }
+    .cursor { display: none !important; }
+    .theme-switcher { display: none !important; }
+    .terminal-dot { display: none !important; }
+    .nav { border-bottom: 1px solid #ccc; }
+    a { color: black !important; }
+    a[href]::after { content: " (" attr(href) ")"; font-size: 0.8em; }
+}
+
+/* ===== Tree view (nested) ===== */
+
+.tree-view {
+    font-size: 0.85rem;
+    line-height: 1.4;
+}
+
+.tree-node {
+    display: flex;
+    white-space: pre;
+}
+
+.tree-branch {
+    color: var(--ctp-overlay0);
+    user-select: none;
+}
+
+.tree-leaf {
+    color: var(--ctp-overlay0);
+    user-select: none;
+}
+
+.tree-dir {
+    color: var(--ctp-blue);
+    font-weight: 700;
+}
+
+.tree-file {
+    color: var(--ctp-green);
+}
+
+.tree-meta {
+    color: var(--ctp-overlay1);
+    font-size: 0.8rem;
+}
+
+/* ===== Exa-style directory listing ===== */
+
+.exa-listing {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem 1.5rem;
+    margin-bottom: 1rem;
+    font-size: 0.85rem;
+}
+
+.exa-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+}
+
+.exa-icon {
+    color: var(--ctp-blue);
+}
+
+.exa-name {
+    color: var(--ctp-blue);
+    font-weight: 700;
+}
+
+/* ===== Bat File Viewer (inline terminal style) ===== */
+
+.bat-view {
+    font-family: "JetBrains Mono", monospace;
+    font-size: clamp(0.75rem, 1.4vw, 0.85rem);
+    line-height: 1.5;
+    overflow-x: auto;
+}
+
+.bat-header {
+    padding: 0;
+    background: none;
+    font-size: 0.75rem;
+    color: var(--ctp-overlay0);
+    border-bottom: 1px solid var(--ctp-surface0);
+    margin-bottom: 0.2rem;
+    padding-bottom: 0.2rem;
+}
+
+.bat-header-label {
+    color: var(--ctp-overlay0);
+}
+
+.bat-header-file {
+    color: var(--ctp-blue);
+    font-weight: 700;
+}
+
+.bat-ruler {
+    height: 1px;
+    background: var(--ctp-surface0);
+    margin: 0.2rem 0;
+}
+
+.bat-content {
+    background: none;
+    padding: 0;
+}
+
+.bat-line {
+    display: flex;
+    padding: 0;
+    min-height: 1.5em;
+}
+
+.bat-gutter {
+    color: var(--ctp-surface2);
+    user-select: none;
+    text-align: right;
+    min-width: 2.5ch;
+    flex-shrink: 0;
+}
+
+.bat-sep {
+    color: var(--ctp-surface1);
+    margin: 0 0.5rem;
+    user-select: none;
+    flex-shrink: 0;
+}
+
+/* Markdown syntax coloring (Catppuccin tokens) */
+.bat-h1 { color: var(--ctp-red); font-weight: 700; }
+.bat-h2 { color: var(--ctp-peach); font-weight: 700; }
+.bat-bullet { color: var(--ctp-yellow); }
+.bat-text { color: var(--ctp-subtext1); }
+.bat-emphasis { color: var(--ctp-green); font-style: italic; }
+.bat-fence { color: var(--ctp-overlay0); }
+
+/* ===== Interactive Terminal ===== */
+
+.interactive-terminal {
+    position: relative;
+    min-height: 200px;
+    cursor: text;
+}
+
+.terminal-hidden-input {
+    position: absolute;
+    left: -9999px;
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.terminal-output {
+    font-size: 0.85rem;
+    line-height: 1.6;
+}
+
+.terminal-line {
+    white-space: pre-wrap;
+    word-break: break-word;
+}
+
+.terminal-line.error {
+    color: var(--ctp-red);
+}
+
+.term-prompt {
+    color: var(--ctp-green);
+    user-select: none;
+}
+
+.term-content {
+    color: var(--ctp-text);
+}
+
+/* Terminal bat syntax colors */
+.terminal-line.bat-file-header .term-content { color: var(--ctp-blue); font-weight: 700; }
+.terminal-line.bat-ruler-line .term-content { color: var(--ctp-surface2); }
+.terminal-line.bat-syn-h1 .term-content { color: var(--ctp-red); font-weight: 700; }
+.terminal-line.bat-syn-h2 .term-content { color: var(--ctp-peach); font-weight: 700; }
+.terminal-line.bat-syn-bullet .term-content { color: var(--ctp-yellow); }
+.terminal-line.bat-syn-quote .term-content { color: var(--ctp-green); font-style: italic; }
+.terminal-line.bat-syn-fence .term-content { color: var(--ctp-overlay0); }
+.terminal-line.bat-syn-text .term-content { color: var(--ctp-subtext1); }
+.terminal-line.bat-syn-empty .term-content { color: var(--ctp-surface2); }
+
+.terminal-input-line {
+    display: flex;
+    align-items: center;
+}
+
+.term-typed {
+    color: var(--ctp-text);
+    white-space: pre;
+}
+
+.term-ghost {
+    color: var(--ctp-overlay0);
+    white-space: pre;
+    user-select: none;
+    pointer-events: none;
+}
+
+.term-completions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0 1.5ch;
+    font-size: 0.8rem;
+    margin-top: 0.15rem;
+    margin-bottom: 0.15rem;
+    padding-left: 1ch;
+}
+
+.term-completion {
+    color: var(--ctp-overlay0);
+    white-space: pre;
+}
+
+.term-completion.selected {
+    color: var(--ctp-text);
+}
+
+.term-completion.more {
+    color: var(--ctp-surface2);
+}
+
+/* ===== Zellij-Inspired Full-Terminal Layout ===== */
+
+.crt-screen {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    padding: clamp(0.25rem, 1vw, 1rem);
+}
+
+.terminal-main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    border-radius: 8px;
+    min-height: 100vh;
+}
+
+.terminal-main-body {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 0 !important;
+    overflow-y: auto;
+}
+
+.terminal-content {
+    flex: 1;
+    padding: clamp(0.75rem, 2vw, 2rem) clamp(1rem, 3vw, 3rem);
+    overflow-y: auto;
+    width: 100%;
+    margin: 0 auto;
+}
+
+/* ── Zellij Tab Bar ── */
+
+.tui-tabs {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.4rem clamp(0.5rem, 2vw, 1rem);
+    background: var(--ctp-crust);
+    border-bottom: 1px solid var(--ctp-surface0);
+    flex-wrap: wrap;
+    gap: 0.25rem;
+    font-size: clamp(0.7rem, 1.5vw, 0.85rem);
+}
+
+.tui-tabs-left {
+    display: flex;
+    gap: 0;
+}
+
+.tui-tabs-right {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.tui-tabs-left a {
+    padding: 0.25rem 0.75rem;
+    color: var(--ctp-subtext0);
+    border: 1px solid transparent;
+    border-bottom: none;
+    border-radius: 4px 4px 0 0;
+    text-decoration: none !important;
+    transition: all 0.15s ease;
+    font-size: inherit;
+}
+
+.tui-tabs-left a:hover {
+    color: var(--ctp-text);
+    background: var(--ctp-surface0);
+}
+
+.tui-tabs-left a.active,
+.tui-tabs-left a[aria-current="page"] {
+    color: var(--ctp-green);
+    background: var(--ctp-mantle);
+    border-color: var(--ctp-green);
+    border-bottom: 2px solid var(--ctp-green);
+    font-weight: 700;
+    text-shadow: 0 0 6px rgba(166,227,161,0.3);
+}
+
+.tui-tabs-left a::before {
+    content: none;
+}
+
+/* ── Zellij Active Pane Highlighting ── */
+
+.tui-section:hover,
+.tui-section:focus-within {
+    border-color: var(--ctp-green);
+}
+
+.tui-section:hover .tui-section-title,
+.tui-section:focus-within .tui-section-title {
+    text-shadow: 0 0 6px rgba(166,227,161,0.4);
+}
+
+.tui-section:hover .tui-section-header::before,
+.tui-section:hover .tui-section-header::after,
+.tui-section:focus-within .tui-section-header::before,
+.tui-section:focus-within .tui-section-header::after {
+    color: var(--ctp-green);
+}
+
+/* ── Zellij Named Panes ── */
+
+.tui-section {
+    border: 1px solid var(--ctp-surface1);
+    border-radius: 4px;
+    margin: 0.75rem 0;
+    padding: 1rem clamp(1rem, 2vw, 1.5rem);
+    position: relative;
+    background: var(--ctp-mantle);
+    width: 100%;
+}
+
+.tui-section-header {
+    position: absolute;
+    top: -0.65em;
+    left: 1rem;
+    background: var(--ctp-mantle);
+    padding: 0 0.4rem;
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+}
+
+.tui-section-header::before {
+    content: "╭";
+    color: var(--ctp-surface2);
+    font-size: 0.7rem;
+}
+
+.tui-section-title {
+    color: var(--ctp-green);
+    font-weight: 700;
+    font-size: clamp(0.7rem, 1.4vw, 0.8rem);
+    text-transform: lowercase;
+}
+
+.tui-section-header::after {
+    content: "╮";
+    color: var(--ctp-surface2);
+    font-size: 0.7rem;
+}
+
+/* ── Monospaced text blocks ── */
+
+.tui-text {
+    font-family: "JetBrains Mono", monospace;
+    font-size: clamp(0.8rem, 1.5vw, 0.9rem);
+    line-height: 1.6;
+    color: var(--ctp-text);
+    white-space: pre-wrap;
+    word-break: break-word;
+    margin: 0;
+}
+
+.tui-text.tui-dim {
+    color: var(--ctp-subtext1);
+}
+
+/* Bat view and sections stretch to fill parent */
+.tui-section > *,
+.bat-view,
+.bat-content,
+.bat-line {
+    max-width: 100%;
+}
+
+.bat-view {
+    width: 100%;
+}
+
+/* ── Zellij Status Bar (bottom) ── */
+
+.tmux-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.35rem clamp(0.5rem, 2vw, 1rem);
+    background: var(--ctp-crust);
+    border-top: 1px solid var(--ctp-surface0);
+    font-size: clamp(0.65rem, 1.3vw, 0.75rem);
+    color: var(--ctp-overlay1);
+    border-radius: 0 0 8px 8px;
+    flex-wrap: wrap;
+    gap: 0.25rem;
+}
+
+.tmux-left {
+    color: var(--ctp-green);
+    font-weight: 700;
+}
+
+.tmux-center {
+    color: var(--ctp-overlay0);
+}
+
+.tmux-right {
+    color: var(--ctp-mauve);
+}
+
+/* ── Titlebar path ── */
+
+.titlebar-path {
+    color: var(--ctp-subtext0);
+    font-size: clamp(0.65rem, 1.3vw, 0.75rem);
+}
+
+/* ── Home title (inside terminal, no hero section) ── */
+
+.home-title {
+    font-size: clamp(1.2rem, 3vw, 1.8rem);
+    color: var(--ctp-text);
+    margin-bottom: 0.5rem;
+}
+
+.home-title .accent {
+    color: var(--ctp-green);
+}
+
+/* ── Hero ASCII inside the terminal ── */
+
+.terminal-main-body > .hero-ascii {
+    text-align: center;
+    margin: 0.5rem 0;
+    font-size: clamp(0.35rem, 0.9vw, 0.65rem);
+}
+
+/* ── Override old shell layout ── */
+
+.shell {
+    max-width: none;
+    margin: 0;
+    padding: 0;
+}
+
+/* ── Responsive: scale everything with viewport ── */
+
+@media (max-width: 768px) {
+    .crt-screen {
+        padding: 0;
+    }
+    .terminal-main {
+        border-radius: 0;
+        min-height: 100vh;
+    }
+    .tmux-bar {
+        border-radius: 0;
+    }
+    .tui-section {
+        margin: 0.5rem 0;
+        border-radius: 4px;
+    }
+    .tui-grid {
+        grid-template-columns: 1fr;
+    }
+    .tui-tabs {
+        font-size: 0.7rem;
+    }
+}
+
+@media (min-width: 1400px) {
+    .crt-screen {
+        padding: 1.5rem 3rem;
+    }
+    .terminal-content {
+        max-width: 1200px;
+        padding: 2rem 3rem;
+    }
+    .tui-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+@media (min-width: 1800px) {
+    .terminal-content {
+        max-width: 1400px;
     }
 }

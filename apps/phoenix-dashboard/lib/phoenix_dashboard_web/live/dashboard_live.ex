@@ -69,12 +69,12 @@ defmodule PhoenixDashboardWeb.DashboardLive do
               <span class="prompt-cmd">ls panes/</span>
             </p>
             <div class="pane-list">
-              <span class="pane-item upcoming">cv-editor/</span>
-              <span class="pane-item upcoming">content-manager/</span>
-              <span class="pane-item upcoming">analytics/</span>
-              <span class="pane-item upcoming">settings/</span>
+              <.link navigate={~p"/skills"} class="pane-item">skills/</.link>
+              <.link navigate={~p"/projects"} class="pane-item">projects/</.link>
+              <.link navigate={~p"/experience"} class="pane-item">experience/</.link>
+              <.link navigate={~p"/certifications"} class="pane-item">certifications/</.link>
+              <.link navigate={~p"/analytics"} class="pane-item">analytics/</.link>
             </div>
-            <p class="hint-text">-- panes coming soon --</p>
           </div>
         </div>
       </div>

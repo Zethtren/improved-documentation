@@ -179,7 +179,7 @@ body::after {
 .app-main {
     flex: 1;
     padding: 1.5rem;
-    max-width: 960px;
+    max-width: 1200px;
     margin: 0 auto;
     width: 100%;
 }
@@ -467,6 +467,185 @@ body::after {
     font-size: 0.85rem;
 }
 
+/* ===== CRUD Tables ===== */
+
+.terminal-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: "JetBrains Mono", monospace;
+    font-size: 0.8rem;
+    margin-top: 0.75rem;
+}
+
+.terminal-table thead th {
+    text-align: left;
+    color: var(--ctp-mauve);
+    font-weight: 700;
+    padding: 0.5rem 0.75rem;
+    border-bottom: 2px solid var(--ctp-surface0);
+    white-space: nowrap;
+    font-size: 0.75rem;
+    text-transform: lowercase;
+}
+
+.terminal-table tbody td {
+    padding: 0.4rem 0.75rem;
+    border-bottom: 1px solid var(--ctp-surface0);
+    color: var(--ctp-subtext1);
+    vertical-align: middle;
+}
+
+.terminal-table tbody tr:hover {
+    background-color: var(--ctp-surface0);
+}
+
+.terminal-table tbody tr.editing-row {
+    background-color: rgba(203, 166, 247, 0.05);
+    border-left: 2px solid var(--ctp-mauve);
+}
+
+.cell-truncate {
+    max-width: 200px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.tags-cell {
+    color: var(--ctp-teal);
+    font-size: 0.75rem;
+}
+
+.action-cell {
+    white-space: nowrap;
+    display: flex;
+    gap: 0.25rem;
+    align-items: center;
+}
+
+/* ===== CRUD Buttons ===== */
+
+.crud-actions {
+    margin: 0.75rem 0 0.25rem;
+}
+
+.terminal-btn {
+    background-color: transparent;
+    border: 1px solid var(--ctp-surface1);
+    color: var(--ctp-subtext0);
+    font-family: "JetBrains Mono", monospace;
+    font-size: 0.75rem;
+    padding: 0.25rem 0.6rem;
+    border-radius: 3px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    white-space: nowrap;
+}
+
+.terminal-btn:hover {
+    background-color: var(--ctp-surface0);
+    border-color: var(--ctp-surface2);
+}
+
+.terminal-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+.terminal-btn.add-btn {
+    color: var(--ctp-green);
+    border-color: var(--ctp-green);
+}
+
+.terminal-btn.add-btn:hover {
+    background-color: rgba(166, 227, 161, 0.1);
+}
+
+.terminal-btn.save-btn {
+    color: var(--ctp-green);
+}
+
+.terminal-btn.save-btn:hover {
+    border-color: var(--ctp-green);
+    background-color: rgba(166, 227, 161, 0.1);
+}
+
+.terminal-btn.cancel-btn {
+    color: var(--ctp-overlay1);
+}
+
+.terminal-btn.cancel-btn:hover {
+    border-color: var(--ctp-overlay1);
+}
+
+.terminal-btn.edit-btn {
+    color: var(--ctp-blue);
+}
+
+.terminal-btn.edit-btn:hover {
+    border-color: var(--ctp-blue);
+    background-color: rgba(137, 180, 250, 0.1);
+}
+
+.terminal-btn.delete-btn {
+    color: var(--ctp-red);
+}
+
+.terminal-btn.delete-btn:hover {
+    border-color: var(--ctp-red);
+    background-color: rgba(243, 139, 168, 0.1);
+}
+
+.terminal-btn.checkbox-btn {
+    color: var(--ctp-green);
+    border: none;
+    padding: 0.15rem 0.3rem;
+    font-size: 0.85rem;
+}
+
+/* ===== Inline Inputs (in-table editing) ===== */
+
+.inline-input {
+    width: 100%;
+    min-width: 60px;
+    padding: 0.25rem 0.5rem !important;
+    font-size: 0.8rem !important;
+    background-color: var(--ctp-crust) !important;
+    border-color: var(--ctp-surface1) !important;
+}
+
+.inline-input:focus {
+    border-color: var(--ctp-mauve) !important;
+    outline: none;
+}
+
+select.inline-input {
+    appearance: none;
+    -webkit-appearance: none;
+    cursor: pointer;
+}
+
+/* ===== Status Messages ===== */
+
+.status-message {
+    padding: 0.4rem 0.75rem;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    margin: 0.5rem 0;
+}
+
+.status-info {
+    color: var(--ctp-green);
+    background-color: rgba(166, 227, 161, 0.08);
+    border-left: 3px solid var(--ctp-green);
+}
+
+.status-error {
+    color: var(--ctp-red);
+    background-color: rgba(243, 139, 168, 0.08);
+    border-left: 3px solid var(--ctp-red);
+}
+
 /* ===== LiveView specific ===== */
 [data-phx-session], [data-phx-teleported-src] { display: contents }
 
@@ -493,5 +672,15 @@ body::after {
 
     .status-key {
         min-width: unset;
+    }
+
+    .terminal-table {
+        display: block;
+        overflow-x: auto;
+    }
+
+    .header-right {
+        flex-wrap: wrap;
+        gap: 0.5rem;
     }
 }

@@ -4,7 +4,7 @@ defmodule PhoenixDashboardWeb.SessionController do
   alias PhoenixDashboard.Auth
 
   def new(conn, _params) do
-    render(conn, :new, error: nil, layout: {PhoenixDashboardWeb.Layouts, :root})
+    render(conn, :new, error: nil)
   end
 
   def create(conn, %{"session" => %{"username" => username, "password" => password}}) do
@@ -18,7 +18,7 @@ defmodule PhoenixDashboardWeb.SessionController do
       :error ->
         conn
         |> put_flash(:error, "Invalid credentials")
-        |> render(:new, error: "Invalid credentials", layout: {PhoenixDashboardWeb.Layouts, :root})
+        |> render(:new, error: "Invalid credentials")
     end
   end
 
