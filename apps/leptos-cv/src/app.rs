@@ -341,6 +341,16 @@ pub fn shell(options: LeptosOptions) -> impl IntoView {
                 <link rel="preconnect" href="https://fonts.googleapis.com" />
                 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="" />
                 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Victor+Mono:ital,wght@0,400;1,400&display=swap" rel="stylesheet" />
+                <link href="https://cdn.jsdelivr.net/gh/ryanoasis/nerd-fonts@v3.3.0/patched-fonts/JetBrainsMono/Ligatures/Regular/JetBrainsMonoNerdFont-Regular.ttf" />
+                <style>{"
+                    @font-face {
+                        font-family: 'JetBrainsMono NF';
+                        src: url('https://cdn.jsdelivr.net/gh/ryanoasis/nerd-fonts@v3.3.0/patched-fonts/JetBrainsMono/Ligatures/Regular/JetBrainsMonoNerdFont-Regular.ttf') format('truetype');
+                        font-weight: 400;
+                        font-style: normal;
+                        font-display: swap;
+                    }
+                "}</style>
             </head>
             <body>
                 <App />
@@ -541,51 +551,230 @@ fn Section(title: &'static str, #[prop(optional)] cmd: Option<&'static str>, chi
     }
 }
 
+// ── Code syntax highlighting (regex-based, Catppuccin tokens) ───────
+
+fn highlight_code_line(line: &str) -> String {
+    let mut result = String::new();
+    let chars: Vec<char> = line.chars().collect();
+    let len = chars.len();
+    let mut i = 0;
+
+    while i < len {
+        // String literals (double quotes)
+        if chars[i] == '"' {
+            let mut s = String::from("\"");
+            i += 1;
+            while i < len && chars[i] != '"' {
+                if chars[i] == '\\' && i + 1 < len {
+                    s.push(chars[i]);
+                    s.push(chars[i + 1]);
+                    i += 2;
+                } else {
+                    s.push(chars[i]);
+                    i += 1;
+                }
+            }
+            if i < len { s.push('"'); i += 1; }
+            result.push_str(&format!("<span class=\"syn-str\">{}</span>", html_escape(&s)));
+            continue;
+        }
+
+        // Atoms/symbols (:word)
+        if chars[i] == ':' && i + 1 < len && chars[i + 1].is_alphabetic() {
+            let mut s = String::from(":");
+            i += 1;
+            while i < len && (chars[i].is_alphanumeric() || chars[i] == '_') {
+                s.push(chars[i]);
+                i += 1;
+            }
+            result.push_str(&format!("<span class=\"syn-atom\">{}</span>", html_escape(&s)));
+            continue;
+        }
+
+        // Numbers
+        if chars[i].is_ascii_digit() {
+            let mut s = String::new();
+            while i < len && (chars[i].is_ascii_digit() || chars[i] == '.' || chars[i] == '_') {
+                s.push(chars[i]);
+                i += 1;
+            }
+            result.push_str(&format!("<span class=\"syn-num\">{}</span>", html_escape(&s)));
+            continue;
+        }
+
+        // Words (keywords, functions, etc.)
+        if chars[i].is_alphabetic() || chars[i] == '_' || chars[i] == '@' {
+            let mut word = String::new();
+            while i < len && (chars[i].is_alphanumeric() || chars[i] == '_' || chars[i] == '!' || chars[i] == '?' || chars[i] == '@') {
+                word.push(chars[i]);
+                i += 1;
+            }
+            let class = match word.as_str() {
+                // Keywords (mauve)
+                "def" | "defp" | "defmodule" | "defmacro" | "defstruct" | "defimpl" | "defprotocol"
+                | "do" | "end" | "if" | "else" | "unless" | "case" | "cond" | "when" | "with"
+                | "fn" | "for" | "in" | "not" | "and" | "or" | "true" | "false" | "nil"
+                | "import" | "use" | "alias" | "require" | "raise" | "rescue" | "try" | "catch" | "after"
+                | "receive" | "send" | "spawn" | "self"
+                // Rust keywords
+                | "let" | "mut" | "const" | "static" | "pub" | "mod" | "struct" | "enum" | "impl"
+                | "trait" | "type" | "where" | "async" | "await" | "move" | "return" | "match"
+                | "loop" | "while" | "break" | "continue" | "unsafe" | "ref" | "as"
+                // Python keywords
+                | "class" | "lambda" | "yield" | "from" | "pass" | "global" | "nonlocal"
+                | "assert" | "del" | "exec" | "print" | "is" | "elif" | "except" | "finally"
+                // Go keywords
+                | "func" | "package" | "var" | "range" | "defer" | "go" | "chan" | "select"
+                | "interface" | "map" | "make" | "new" | "append" | "len" | "cap"
+                // JS/TS
+                | "function" | "export" | "default" | "typeof" | "instanceof" | "void"
+                | "throw" | "extends" | "super" | "this" | "null" | "undefined"
+                // SQL
+                | "SELECT" | "FROM" | "WHERE" | "INSERT" | "UPDATE" | "DELETE" | "CREATE"
+                | "TABLE" | "INTO" | "VALUES" | "SET" | "ORDER" | "BY" | "GROUP" | "HAVING"
+                | "JOIN" | "LEFT" | "RIGHT" | "INNER" | "OUTER" | "ON" | "AS" | "LIMIT"
+                | "DEFINE" | "FIELD" | "TYPE" | "INDEX" | "UNIQUE" | "DEFAULT" | "RELATE"
+                => "syn-kw",
+                // Built-in types (yellow)
+                "String" | "Integer" | "Float" | "List" | "Map" | "Tuple" | "Atom" | "Keyword"
+                | "GenServer" | "Supervisor" | "Agent" | "Task" | "Enum" | "Stream"
+                | "Ok" | "Err" | "Some" | "None" | "Result" | "Option" | "Vec" | "Box" | "Arc" | "Rc"
+                | "i32" | "i64" | "u32" | "u64" | "f32" | "f64" | "usize" | "bool" | "str"
+                => "syn-type",
+                // Module-like (starts with uppercase)
+                _ if word.starts_with(|c: char| c.is_uppercase()) => "syn-type",
+                // @-prefixed (decorators/module attributes)
+                _ if word.starts_with('@') => "syn-attr",
+                _ => "",
+            };
+            if class.is_empty() {
+                result.push_str(&html_escape(&word));
+            } else {
+                result.push_str(&format!("<span class=\"{}\">{}</span>", class, html_escape(&word)));
+            }
+            continue;
+        }
+
+        // Operators
+        if "|>=<+-*/%&!^~".contains(chars[i]) {
+            let mut op = String::new();
+            while i < len && "|>=<+-*/%&!^~".contains(chars[i]) {
+                op.push(chars[i]);
+                i += 1;
+            }
+            result.push_str(&format!("<span class=\"syn-op\">{}</span>", html_escape(&op)));
+            continue;
+        }
+
+        // Everything else
+        result.push(chars[i]);
+        i += 1;
+    }
+
+    result
+}
+
+fn html_escape(s: &str) -> String {
+    s.replace('&', "&amp;").replace('<', "&lt;").replace('>', "&gt;")
+}
+
 // ── Bat-style file viewer ───────────────────────────────────────────
 
-fn render_bat_lines(lines: &[&str]) -> Vec<impl IntoView> {
+fn render_bat_lines(lines: &[&str]) -> Vec<AnyView> {
     let total = lines.len();
     let gutter_width = format!("{}", total).len();
     let mut in_code_block = false;
-    let mut code_lang = String::new();
+    let mut result: Vec<AnyView> = Vec::new();
 
-    lines.iter().enumerate().map(|(i, line)| {
+    for (i, line) in lines.iter().enumerate() {
         let num = i + 1;
         let padded = format!("{:>width$}", num, width = gutter_width);
 
-        let colored = if line.starts_with("```") {
+        // Detect code fence boundaries
+        if line.starts_with("```") {
             if !in_code_block {
                 in_code_block = true;
-                code_lang = line.trim_start_matches('`').trim().to_string();
-                let label = if code_lang.is_empty() { "code".to_string() } else { code_lang.clone() };
-                view! {
-                    <span class="bat-fence-open">
-                        <span class="bat-fence-lang-label">{label}</span>
-                    </span>
-                }.into_any()
+                let lang = line.trim_start_matches('`').trim().to_string();
+                let label = if lang.is_empty() { "code".to_string() } else { lang };
+                // Nerd Font Unicode icons for languages
+                let icon = match label.as_str() {
+                    "rust" => "\u{e7a8}",      //
+                    "elixir" => "\u{e62d}",    //
+                    "python" | "py" => "\u{e73c}", //
+                    "javascript" | "js" => "\u{e74e}", //
+                    "typescript" | "ts" => "\u{e628}", //
+                    "go" | "golang" => "\u{e626}",     //
+                    "ruby" | "rb" => "\u{e791}",       //
+                    "bash" | "sh" | "shell" | "zsh" => "\u{e795}", //
+                    "sql" => "\u{e706}",       //
+                    "docker" | "dockerfile" => "\u{e7b0}", //
+                    "html" => "\u{e736}",      //
+                    "css" => "\u{e749}",        //
+                    "yaml" | "yml" => "\u{e6a8}", //
+                    "toml" => "\u{e6b2}",      //
+                    "json" => "\u{e60b}",      //
+                    _ => "\u{e7a8}",           // default: code
+                };
+                result.push(view! {
+                    <div class="bat-line bat-line-fence-open">
+                        <span class="bat-gutter">{padded}</span>
+                        <span class="bat-sep">"│"</span>
+                        <span class="bat-fence-open">
+                            <span class="bat-lang-icon">{icon}</span>
+                            " "
+                            <span class="bat-fence-lang-label">{label}</span>
+                        </span>
+                    </div>
+                }.into_any());
             } else {
                 in_code_block = false;
-                code_lang.clear();
-                view! { <span class="bat-fence-close" /> }.into_any()
+                result.push(view! {
+                    <div class="bat-line bat-line-fence-close">
+                        <span class="bat-gutter">{padded}</span>
+                        <span class="bat-sep">"│"</span>
+                    </div>
+                }.into_any());
             }
-        } else if in_code_block {
+            continue;
+        }
+
+        if in_code_block {
             let trimmed = line.trim();
-            if trimmed.starts_with("//") || trimmed.starts_with("#") && !trimmed.starts_with("#!") || trimmed.starts_with("--") {
-                view! { <span class="bat-code-comment">{line.to_string()}</span> }.into_any()
+            let is_comment = trimmed.starts_with("//") || trimmed.starts_with("--")
+                || (trimmed.starts_with('#') && !trimmed.starts_with("#!") && !trimmed.starts_with("#["));
+            if is_comment {
+                result.push(view! {
+                    <div class="bat-line bat-line-code">
+                        <span class="bat-gutter">{padded}</span>
+                        <span class="bat-sep">"│"</span>
+                        <span class="bat-code-comment">{line.to_string()}</span>
+                    </div>
+                }.into_any());
             } else {
-                view! { <span class="bat-code">{line.to_string()}</span> }.into_any()
+                let highlighted = highlight_code_line(line);
+                result.push(view! {
+                    <div class="bat-line bat-line-code">
+                        <span class="bat-gutter">{padded}</span>
+                        <span class="bat-sep">"│"</span>
+                        <span class="bat-code" inner_html=highlighted />
+                    </div>
+                }.into_any());
             }
-        } else if line.starts_with("# ") {
+            continue;
+        }
+
+        // Regular markdown
+        let colored = if line.starts_with("# ") {
             view! { <span class="bat-h1">{line.to_string()}</span> }.into_any()
-        } else if line.starts_with("## ") {
-            view! { <span class="bat-h2">{line.to_string()}</span> }.into_any()
-        } else if line.starts_with("### ") {
+        } else if line.starts_with("## ") || line.starts_with("### ") {
             view! { <span class="bat-h2">{line.to_string()}</span> }.into_any()
         } else if line.starts_with("- ") || line.starts_with("* ") {
             let bullet = &line[..2];
             let rest = &line[2..];
             view! { <span class="bat-bullet">{bullet.to_string()}</span><span class="bat-text">{rest.to_string()}</span> }.into_any()
-        } else if line.starts_with("**") || line.starts_with("> ") {
+        } else if line.starts_with("> ") {
+            view! { <span class="bat-emphasis">{line.to_string()}</span> }.into_any()
+        } else if line.starts_with("**") {
             view! { <span class="bat-emphasis">{line.to_string()}</span> }.into_any()
         } else if line.trim().is_empty() {
             view! { <span>{" "}</span> }.into_any()
@@ -593,14 +782,16 @@ fn render_bat_lines(lines: &[&str]) -> Vec<impl IntoView> {
             view! { <span class="bat-text">{line.to_string()}</span> }.into_any()
         };
 
-        view! {
-            <div class=if in_code_block && !line.starts_with("```") { "bat-line bat-line-code" } else { "bat-line" }>
+        result.push(view! {
+            <div class="bat-line">
                 <span class="bat-gutter">{padded}</span>
                 <span class="bat-sep">"│"</span>
                 {colored}
             </div>
-        }
-    }).collect::<Vec<_>>()
+        }.into_any());
+    }
+
+    result
 }
 
 #[component]
@@ -1019,52 +1210,11 @@ fn BlogPost() -> impl IntoView {
                 match result {
                     Ok(Some(p)) => {
                         let file_name = format!("blog/{}.md", p.slug);
-                        let lines: Vec<String> = p.content.lines().map(|l| l.to_string()).collect();
-                        let total = lines.len();
-                        let gutter_width = format!("{}", total).len();
+                        let content = p.content.clone();
 
                         view! {
                             <Section title="blog">
-                                <div class="bat-view">
-                                    <div class="bat-header">
-                                        <span class="bat-header-label">"File: "</span>
-                                        <span class="bat-header-file">{file_name}</span>
-                                    </div>
-                                    <div class="bat-ruler" />
-                                    <div class="bat-content">
-                                        {lines.into_iter().enumerate().map(|(i, line)| {
-                                            let num = i + 1;
-                                            let padded = format!("{:>width$}", num, width = gutter_width);
-
-                                            let colored = if line.starts_with("# ") {
-                                                view! { <span class="bat-h1">{line.clone()}</span> }.into_any()
-                                            } else if line.starts_with("## ") {
-                                                view! { <span class="bat-h2">{line.clone()}</span> }.into_any()
-                                            } else if line.starts_with("- ") || line.starts_with("* ") {
-                                                let bullet = line[..2].to_string();
-                                                let rest = line[2..].to_string();
-                                                view! { <span class="bat-bullet">{bullet}</span><span class="bat-text">{rest}</span> }.into_any()
-                                            } else if line.starts_with("**") || line.starts_with("> ") {
-                                                view! { <span class="bat-emphasis">{line.clone()}</span> }.into_any()
-                                            } else if line.starts_with("```") {
-                                                view! { <span class="bat-fence">{line.clone()}</span> }.into_any()
-                                            } else if line.trim().is_empty() {
-                                                view! { <span>{" "}</span> }.into_any()
-                                            } else {
-                                                view! { <span class="bat-text">{line.clone()}</span> }.into_any()
-                                            };
-
-                                            view! {
-                                                <div class="bat-line">
-                                                    <span class="bat-gutter">{padded}</span>
-                                                    <span class="bat-sep">"│"</span>
-                                                    {colored}
-                                                </div>
-                                            }
-                                        }).collect_view()}
-                                    </div>
-                                    <div class="bat-ruler" />
-                                </div>
+                                <DynBatView file=file_name content=content />
                                 <br />
                                 <div class="hero-links">
                                     <a href="/blog">"$ ls blog/"</a>
