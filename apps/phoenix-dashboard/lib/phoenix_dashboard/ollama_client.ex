@@ -20,7 +20,7 @@ defmodule PhoenixDashboard.OllamaClient do
     model = Keyword.get(opts, :model, "llama3.1:8b")
     case Req.post("#{base_url()}/api/generate",
       json: %{model: model, prompt: prompt, stream: false},
-      receive_timeout: 60_000
+      receive_timeout: 300_000
     ) do
       {:ok, %{status: 200, body: %{"response" => response}}} ->
         {:ok, String.trim(response)}

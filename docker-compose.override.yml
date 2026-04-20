@@ -1,6 +1,3 @@
-version: "3.8"
-
 services:
   surrealdb:
-    # Use memory storage in dev (faster, no persistence needed)
-    command: ["start", "--auth", "--user", "root", "--pass", "root", "--bind", "0.0.0.0:8000", "memory"]
+    command: ["start", "-u", "root", "-p", "root", "-b", "0.0.0.0:8000", "file:/data"]

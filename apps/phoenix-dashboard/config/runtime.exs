@@ -31,6 +31,11 @@ config :phoenix_dashboard, :surrealdb,
   username: System.get_env("SURREAL_USER") || "root",
   password: System.get_env("SURREAL_PASS") || "root"
 
+# AI pipeline services — override via env vars
+config :phoenix_dashboard,
+  ollama_url: System.get_env("OLLAMA_URL") || "http://localhost:11434",
+  searxng_url: System.get_env("SEARXNG_URL") || "http://localhost:8888"
+
 if config_env() == :prod do
   # The secret key base is used to sign/encrypt cookies and other secrets.
   # A default value is used in config/dev.exs and config/test.exs but you

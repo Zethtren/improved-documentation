@@ -2,7 +2,10 @@ version: "3.8"
 
 services:
   surrealdb:
-    build: ./apps/surrealdb
+    build:
+      context: ./apps/surrealdb
+      target: server
+    user: "0:0"
     ports:
       - "8000:8000"
     environment:
@@ -11,19 +14,21 @@ services:
     volumes:
       - surreal-data:/data
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      test: ["CMD", "/surreal", "is-ready", "-e", "http://localhost:8000"]
       interval: 5s
       timeout: 3s
       retries: 10
 
   surrealdb-init:
-    build: ./apps/surrealdb
+    profiles: ["init"]
+    build:
+      context: ./apps/surrealdb
+      target: init
     depends_on:
       surrealdb:
         condition: service_healthy
-    entrypoint: ["/opt/surrealdb/scripts/init.sh"]
     environment:
-      - SURREAL_URL=http://surrealdb:8000
+      - SURREAL_HOST=http://surrealdb:8000
       - SURREAL_USER=root
       - SURREAL_PASS=root
 
@@ -32,7 +37,7 @@ services:
     ports:
       - "8080:8080"
     environment:
-      - SURREALDB_URL=ws://surrealdb:8000
+      - SURREALDB_URL=http://surrealdb:8000
       - LEPTOS_SITE_ADDR=0.0.0.0:8080
     depends_on:
       surrealdb:
@@ -48,9 +53,36 @@ services:
       - SURREAL_PASS=root
       - SECRET_KEY_BASE=dev-only-secret-key-base-that-is-at-least-64-bytes-long-for-phoenix-to-accept
       - PHX_HOST=localhost
+      - PHX_SERVER=true
+      - OLLAMA_URL=http://ollama:11434
+      - SEARXNG_URL=http://searxng:8080
     depends_on:
       surrealdb:
         condition: service_healthy
+      ollama:
+        condition: service_healthy
+
+  ollama:
+    image: ollama/ollama:latest
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama-data:/root/.ollama
+    healthcheck:
+      test: ["CMD", "ollama", "list"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  searxng:
+    image: searxng/searxng:latest
+    ports:
+      - "8889:8080"
+    environment:
+      - SEARXNG_BASE_URL=http://localhost:8889
+    volumes:
+      - ./apps/searxng/settings.yml:/etc/searxng/settings.yml:ro
 
 volumes:
   surreal-data:
+  ollama-data:

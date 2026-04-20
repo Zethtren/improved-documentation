@@ -60,9 +60,15 @@ defmodule PhoenixDashboard.EmbeddingPipeline do
   # Step 1: Ask LLM for search queries
   defp generate_search_queries(content) do
     prompt = """
-    Read this blog post and generate 4 diverse search queries that would find related articles other developers have written.
-    Think about: similar technologies, alternative approaches, deeper dives into subtopics, and complementary skills.
-    Don't just rephrase the title — think about what a reader would want to explore AFTER reading this.
+    Read this blog post carefully. Based ONLY on the actual subject matter and topics discussed in the post, generate 4 search queries that would find related articles.
+
+    Focus on:
+    - The specific topics, themes, and subject matter in the post
+    - Deeper dives into concepts mentioned in the post
+    - Related perspectives on the same subject
+    - Complementary knowledge that would interest someone reading about this topic
+
+    Do NOT assume the post is about technology or programming — read what it's actually about.
 
     Output exactly 4 search queries, one per line. No numbering, no bullets, just the queries.
 
@@ -91,7 +97,7 @@ defmodule PhoenixDashboard.EmbeddingPipeline do
     results = queries
       |> Enum.flat_map(fn query ->
         Logger.info("Searching: #{query}")
-        case WebSearch.search(query <> " blog post article", max_results: 10) do
+        case WebSearch.search(query, max_results: 10) do
           {:ok, results} -> results
           {:error, _} -> []
         end
@@ -113,14 +119,13 @@ defmodule PhoenixDashboard.EmbeddingPipeline do
       |> Enum.join("\n\n")
 
     prompt = """
-    You are selecting the 5 most useful articles for someone who just read a blog post.
-    Don't just pick the most similar articles — think about what would genuinely help the reader:
-    - Articles that go deeper into a topic mentioned
-    - Alternative perspectives or approaches
-    - Practical tutorials that complement the knowledge
-    - Well-written pieces from real developers sharing experience
+    You are selecting the 5 most relevant articles for someone who just read the blog post below.
+    Pick articles that are directly related to the subject matter of the original post:
+    - Articles that go deeper into topics discussed in the post
+    - Alternative perspectives on the same subject
+    - Practical or informative content that complements what the reader just learned
 
-    Avoid: marketing pages, generic documentation landing pages, or results that seem off-topic.
+    Avoid: marketing pages, generic landing pages, or results unrelated to the post's actual topic.
 
     ORIGINAL BLOG POST:
     #{String.slice(content, 0..1500)}
