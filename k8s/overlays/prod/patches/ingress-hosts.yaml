@@ -1,0 +1,38 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: houston-cv-ingress
+  namespace: houston-cv
+spec:
+  ingressClassName: traefik
+  rules:
+    - host: houstonbova.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: leptos-cv-svc
+                port:
+                  number: 80
+    - host: admin.zethtren.xyz
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: phoenix-dashboard-svc
+                port:
+                  number: 80
+    - host: traefik.zethtren.xyz
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: traefik-dashboard
+                port:
+                  number: 8080

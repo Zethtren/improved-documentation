@@ -1,0 +1,22 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: cloudflared-config
+  namespace: houston-cv
+data:
+  config.yaml: |
+    # TODO: set tunnel ID after `cloudflared tunnel create houston-cv`.
+    # Credentials JSON is supplied via the cloudflared-credentials Secret
+    # (created out-of-band on the prod cluster — do not commit).
+    tunnel: 272783fe-1fb8-4abd-8813-dd73e91b9c30
+    credentials-file: /etc/cloudflared/creds/credentials.json
+    metrics: 0.0.0.0:2000
+    no-autoupdate: true
+    ingress:
+      - hostname: houstonbova.com
+        service: http://traefik:80
+      - hostname: admin.zethtren.xyz
+        service: http://traefik:80
+      - hostname: traefik.zethtren.xyz
+        service: http://traefik:80
+      - service: http_status:404
