@@ -29,9 +29,13 @@ spec:
               value: "admin.localhost"
             - name: PHX_SERVER
               value: "true"
+            - name: OLLAMA_URL
+              value: "http://ollama:11434"
+            - name: SEARXNG_URL
+              value: "http://searxng-svc:8080"
           livenessProbe:
             httpGet:
-              path: /health
+              path: /
               port: 4000
             initialDelaySeconds: 10
             periodSeconds: 15

@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: searxng-settings
+  namespace: houston-cv
+  labels:
+    app: searxng
+data:
+  settings.yml: |
+    use_default_settings: true
+
+    search:
+      formats:
+        - html
+        - json
+
+    server:
+      secret_key: "houston-cv-dev-searxng-key"
+      limiter: false

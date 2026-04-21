@@ -8,4 +8,6 @@ resources:
   - leptos-cv/
   - surrealdb/
   - phoenix-dashboard/
+  - ollama/
+  - searxng/
   - ingress/

@@ -1,0 +1,29 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: surrealdb-init
+  namespace: houston-cv
+  labels:
+    app: surrealdb-init
+spec:
+  backoffLimit: 3
+  ttlSecondsAfterFinished: 300
+  template:
+    metadata:
+      labels:
+        app: surrealdb-init
+    spec:
+      restartPolicy: OnFailure
+      containers:
+        - name: surrealdb-init
+          image: houston-cv/surrealdb-init:latest
+          env:
+            - name: SURREAL_HOST
+              value: "http://surrealdb:8000"
+            - name: SURREAL_USER
+              value: "root"
+            - name: SURREAL_PASS
+              valueFrom:
+                secretKeyRef:
+                  name: surrealdb-credentials
+                  key: SURREAL_PASS
