@@ -1,0 +1,22 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: houston-cv-public-ingress
+  namespace: houston-cv
+  labels:
+    project: houston-cv
+  annotations:
+    traefik.ingress.kubernetes.io/router.middlewares: houston-cv-cv-rate-limit@kubernetescrd,houston-cv-cv-inflight@kubernetescrd
+spec:
+  ingressClassName: traefik
+  rules:
+    - host: houstonbova.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: leptos-cv-svc
+                port:
+                  number: 80

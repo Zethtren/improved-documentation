@@ -14,6 +14,7 @@ kind: Kustomization
 resources:
   - ../../base
   - ../../base/cloudflared
+  - patches/ingress-public.yaml
 
 patches:
   - path: patches/ingress-hosts.yaml
