@@ -6,3 +6,4 @@ resources:
   - service.yaml
   - secret.yaml
   - networkpolicy.yaml
+  - init-job.yaml

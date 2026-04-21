@@ -18,7 +18,8 @@ spec:
     spec:
       containers:
         - name: surrealdb
-          image: surrealdb/surrealdb:v2
+          image: houston-cv/surrealdb:latest
+          command: ["/surreal"]
           args:
             - "start"
             - "-u"
