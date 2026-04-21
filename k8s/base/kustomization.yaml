@@ -10,4 +10,5 @@ resources:
   - phoenix-dashboard/
   - ollama/
   - searxng/
+  - traefik/
   - ingress/
