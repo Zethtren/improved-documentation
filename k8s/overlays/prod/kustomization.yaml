@@ -3,11 +3,18 @@ kind: Kustomization
 
 # TODO: prod overlays
 # - Replace surrealdb-credentials secret with SealedSecrets or External Secrets
+# - Replace cloudflared-credentials secret with SealedSecrets / External Secrets
+# - Set real tunnel ID in patches/cloudflared-config.yaml
 # - Set proper resource requests/limits
 # - Configure HPA (Horizontal Pod Autoscaler) for leptos-cv and phoenix-dashboard
-# - Add TLS certificates to Ingress
 # - Set proper image tags (not :latest)
 # - Configure PodDisruptionBudgets
+# - Protect traefik.zethtren.xyz dashboard with Cloudflare Access policy
 
 resources:
   - ../../base
+  - ../../base/cloudflared
+
+patches:
+  - path: patches/ingress-hosts.yaml
+  - path: patches/cloudflared-config.yaml
