@@ -6,7 +6,7 @@ metadata:
   labels:
     project: houston-cv
 spec:
-  ingressClassName: nginx
+  ingressClassName: traefik
   rules:
     - host: cv.localhost
       http:
@@ -28,3 +28,13 @@ spec:
                 name: phoenix-dashboard-svc
                 port:
                   number: 80
+    - host: traefik.localhost
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: traefik-dashboard
+                port:
+                  number: 8080
