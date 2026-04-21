@@ -1,0 +1,16 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+# Intentionally NOT included in k8s/base/kustomization.yaml.
+# Referenced only by overlays/prod so dev clusters never try to open a tunnel.
+#
+# The `cloudflared-credentials` Secret is managed OUT-OF-BAND (not via
+# kustomize) so that the real tunnel credentials never live in git. Create it
+# once on the cluster with:
+#   kubectl create secret generic cloudflared-credentials \
+#     --from-file=credentials.json=$HOME/.cloudflared/<tunnel-uuid>.json \
+#     -n houston-cv
+# Move to SealedSecrets / External Secrets before any shared cluster.
+resources:
+  - configmap.yaml
+  - deployment.yaml
