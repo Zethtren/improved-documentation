@@ -8,6 +8,8 @@ patches:
   - path: patches/leptos-cv-patch.yaml
   - path: patches/phoenix-patch.yaml
   - path: patches/surrealdb-patch.yaml
+  - path: patches/ollama-patch.yaml
+  - path: patches/searxng-patch.yaml
 
   # Remove NetworkPolicy in dev — not needed for local development
   - target:

@@ -9,6 +9,10 @@ spec:
     spec:
       containers:
         - name: surrealdb
+          imagePullPolicy: Never
+          env:
+            - name: SURREAL_PASS
+              value: "root"
           resources:
             limits:
               memory: "256Mi"
@@ -22,3 +26,15 @@ spec:
       volumes:
         - name: surrealdb-data
           emptyDir: {}
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: surrealdb-init
+  namespace: houston-cv
+spec:
+  template:
+    spec:
+      containers:
+        - name: surrealdb-init
+          imagePullPolicy: Never

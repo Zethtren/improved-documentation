@@ -9,10 +9,15 @@ spec:
       containers:
         - name: phoenix-dashboard
           imagePullPolicy: Never
+          env:
+            - name: SURREAL_USER
+              value: "root"
+            - name: SURREAL_PASS
+              value: "root"
           resources:
             limits:
-              memory: "256Mi"
-              cpu: "250m"
+              memory: "512Mi"
+              cpu: "1000m"
             requests:
               memory: "256Mi"
               cpu: "250m"

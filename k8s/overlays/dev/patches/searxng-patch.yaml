@@ -1,21 +1,17 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: leptos-cv
+  name: searxng
   namespace: houston-cv
 spec:
   template:
     spec:
       containers:
-        - name: leptos-cv
-          imagePullPolicy: Never
-          env:
-            - name: SURREAL_PASS
-              value: "root"
+        - name: searxng
           resources:
             limits:
-              memory: "128Mi"
-              cpu: "100m"
+              memory: "256Mi"
+              cpu: "250m"
             requests:
               memory: "128Mi"
               cpu: "100m"
