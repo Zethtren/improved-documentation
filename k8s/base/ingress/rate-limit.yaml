@@ -1,0 +1,25 @@
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: cv-rate-limit
+  namespace: houston-cv
+  labels:
+    project: houston-cv
+spec:
+  rateLimit:
+    average: 5
+    burst: 20
+    period: 1s
+    sourceCriterion:
+      requestHeaderName: Cf-Connecting-Ip
+---
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: cv-inflight
+  namespace: houston-cv
+  labels:
+    project: houston-cv
+spec:
+  inFlightReq:
+    amount: 40

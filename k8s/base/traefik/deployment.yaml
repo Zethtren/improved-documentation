@@ -25,6 +25,8 @@ spec:
             - --ping=true
             - --providers.kubernetesingress=true
             - --providers.kubernetesingress.ingressclass=traefik
+            - --providers.kubernetescrd=true
+            - --providers.kubernetescrd.allowcrossnamespace=false
             - --entrypoints.web.address=:80
             - --entrypoints.traefik.address=:8080
             - --log.level=INFO

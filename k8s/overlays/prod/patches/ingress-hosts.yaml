@@ -6,16 +6,6 @@ metadata:
 spec:
   ingressClassName: traefik
   rules:
-    - host: houstonbova.com
-      http:
-        paths:
-          - path: /
-            pathType: Prefix
-            backend:
-              service:
-                name: leptos-cv-svc
-                port:
-                  number: 80
     - host: admin.zethtren.xyz
       http:
         paths:
