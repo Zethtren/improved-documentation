@@ -21,7 +21,8 @@ if System.get_env("PHX_SERVER") do
 end
 
 config :phoenix_dashboard, PhoenixDashboardWeb.Endpoint,
-  http: [port: String.to_integer(System.get_env("PORT", "4000"))]
+  http: [port: String.to_integer(System.get_env("PORT", "4000"))],
+  check_origin: System.get_env("PHX_CHECK_ORIGIN", "true") != "false"
 
 # SurrealDB connection — override via env vars
 config :phoenix_dashboard, :surrealdb,

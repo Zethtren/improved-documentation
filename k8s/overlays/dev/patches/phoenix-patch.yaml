@@ -14,6 +14,10 @@ spec:
               value: "root"
             - name: SURREAL_PASS
               value: "root"
+            - name: PHX_HOST
+              value: "localhost"
+            - name: PHX_CHECK_ORIGIN
+              value: "false"
           resources:
             limits:
               memory: "512Mi"

@@ -22,7 +22,7 @@ spec:
             - containerPort: 8080
           env:
             - name: SURREALDB_URL
-              value: "ws://surrealdb:8000"
+              value: "http://surrealdb:8000"
             - name: LEPTOS_SITE_ADDR
               value: "0.0.0.0:8080"
           livenessProbe:
