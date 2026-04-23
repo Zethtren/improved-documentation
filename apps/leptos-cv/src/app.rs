@@ -894,7 +894,7 @@ that don't get in the way.
                     <div class="fetch-row"><span class="fetch-key">"Infra"</span>" GCP, Docker, Kubernetes"</div>
                     <div class="fetch-row"><span class="fetch-key">"GitHub"</span>" "<a href="https://github.com/Zethtren" target="_blank">"github.com/Zethtren"</a></div>
                     <div class="fetch-row"><span class="fetch-key">"Focus"</span>" Cloud Architecture, Data Eng"</div>
-                    <div class="fetch-row"><span class="fetch-key">"Status"</span>" Open to opportunities"</div>
+                    <div class="fetch-row"><span class="fetch-key">"Status"</span>" Open to side projects & contracts"</div>
                     <br />
                     <div class="fetch-colors">
                         <span class="fc fc-0" />
