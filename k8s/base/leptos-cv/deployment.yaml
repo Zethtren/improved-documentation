@@ -25,6 +25,11 @@ spec:
               value: "http://surrealdb:8000"
             - name: LEPTOS_SITE_ADDR
               value: "0.0.0.0:8080"
+            - name: SURREAL_PASS
+              valueFrom:
+                secretKeyRef:
+                  name: surrealdb-credentials
+                  key: SURREAL_PASS
           livenessProbe:
             httpGet:
               path: /
