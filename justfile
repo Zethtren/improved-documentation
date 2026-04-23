@@ -58,7 +58,7 @@ mk-deploy:
     minikube image load houston-cv/leptos-cv:latest
     minikube image load houston-cv/phoenix-dashboard:latest
     echo "[2/5] Applying Kubernetes manifests..."
-    kubectl apply -k k8s/overlays/dev/
+    kubectl apply -k k8s/overlays/live-local/
     echo "[3/5] Waiting for pods..."
     kubectl wait --for=condition=ready pod -l app=surrealdb -n houston-cv --timeout=120s
     kubectl wait --for=condition=ready pod -l app=ollama -n houston-cv --timeout=120s
@@ -76,7 +76,7 @@ mk-deploy:
 
 # Tear down minikube deployment
 mk-teardown:
-    kubectl delete -k k8s/overlays/dev/ --ignore-not-found
+    kubectl delete -k k8s/overlays/live-local/ --ignore-not-found
     @echo "Done. Images remain cached in minikube."
 
 # Port-forward minikube services to localhost
