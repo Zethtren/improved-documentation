@@ -230,7 +230,7 @@ fn fallback_experience() -> Vec<ExperienceData> {
             company: "Nicular LLC".into(),
             start_date: "Jul 2022".into(),
             end_date: None,
-            description: "I own the cloud. Designed and built the company's entire GCP architecture from the ground up — VPCs, secrets management, client storage, the works. Built internal tooling so the team can ship new services to Cloud Run or GKE without touching infrastructure. Led the migration of legacy GCP-managed apps into Kubernetes, and I review every line of code that goes to production.".into(),
+            description: "Lead dev on the cloud side. Helped design and build much of the company's GCP architecture — VPCs, secrets management, client storage, and the supporting bits — and built internal tooling so the team can ship services to Cloud Run or GKE without wrestling with infra. Helped drive the migration of legacy GCP-managed apps into Kubernetes, and review a lot of what goes to production.".into(),
             current: Some(true),
         },
         ExperienceData {
@@ -894,7 +894,7 @@ that don't get in the way.
                     <div class="fetch-row"><span class="fetch-key">"Infra"</span>" GCP, Docker, Kubernetes"</div>
                     <div class="fetch-row"><span class="fetch-key">"GitHub"</span>" "<a href="https://github.com/Zethtren" target="_blank">"github.com/Zethtren"</a></div>
                     <div class="fetch-row"><span class="fetch-key">"Focus"</span>" Cloud Architecture, Data Eng"</div>
-                    <div class="fetch-row"><span class="fetch-key">"Status"</span>" Open to opportunities"</div>
+                    <div class="fetch-row"><span class="fetch-key">"Status"</span>" Open to side projects & contracts"</div>
                     <br />
                     <div class="fetch-colors">
                         <span class="fc fc-0" />
