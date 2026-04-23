@@ -24,10 +24,13 @@ RUN apt-get update && apt-get install -y ca-certificates libssl3 && rm -rf /var/
 
 WORKDIR /app
 COPY --from=builder /app/target/release/leptos-cv ./
+COPY --from=builder /app/target/release/hash.txt ./hash.txt
 COPY --from=builder /app/target/site ./site
 
 ENV LEPTOS_SITE_ADDR=0.0.0.0:8080
 ENV LEPTOS_SITE_ROOT=site
+ENV LEPTOS_HASH_FILES=true
+ENV LEPTOS_HASH_FILE_NAME=hash.txt
 EXPOSE 8080
 
 CMD ["./leptos-cv"]
