@@ -1,9 +1,9 @@
 # Stage 1: Install cargo-leptos (cached layer)
 FROM rust:slim-bookworm AS toolchain
 
-RUN apt-get update && apt-get install -y pkg-config libssl-dev binaryen perl make && rm -rf /var/lib/apt/lists/*
+RUN apt-get update && apt-get install -y pkg-config libssl-dev perl make && rm -rf /var/lib/apt/lists/*
 RUN rustup target add wasm32-unknown-unknown
-RUN cargo install cargo-leptos@0.3.5
+RUN cargo install cargo-leptos@0.3.6
 
 # Stage 2: Build the app
 FROM toolchain AS builder
@@ -13,6 +13,8 @@ COPY Cargo.toml Cargo.lock ./
 COPY src/ src/
 COPY style.css index.html ./
 
+RUN cargo update
+ENV LEPTOS_WASM_OPT_VERSION=version_129
 RUN cargo leptos build --release
 
 # Stage 3: Runtime
