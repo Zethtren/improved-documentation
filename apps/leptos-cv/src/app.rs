@@ -354,9 +354,9 @@ pub fn shell(options: LeptosOptions) -> impl IntoView {
                 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
                 <title>"~/houston — Houston Kelly Bova"</title>
                 <AutoReload options=options.clone() />
-                <HydrationScripts options />
+                <HydrationScripts options=options.clone() />
                 <MetaTags />
-                <Stylesheet href="/pkg/leptos-cv.css" />
+                <HashedStylesheet options=options.clone() id="leptos" />
                 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/mshaugh/nerdfont-webfonts@v3.3.0/build/nerdfont-webfonts.min.css" />
                 <link rel="preconnect" href="https://fonts.googleapis.com" />
                 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="" />

@@ -44,8 +44,7 @@ ssr = [
 
 [profile.wasm-release]
 inherits = "release"
-opt-level = 'z'
-lto = true
+opt-level = 's'
 codegen-units = 1
 panic = "abort"
 
@@ -64,3 +63,4 @@ bin-default-features = false
 lib-features = ["hydrate"]
 lib-default-features = false
 lib-profile-release = "wasm-release"
+hash-files = true
