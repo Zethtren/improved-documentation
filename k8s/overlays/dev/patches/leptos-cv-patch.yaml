@@ -12,6 +12,7 @@ spec:
           env:
             - name: SURREAL_PASS
               value: "root"
+              valueFrom: null
           resources:
             limits:
               memory: "128Mi"
